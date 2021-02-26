@@ -3,6 +3,7 @@
 A Python library for parsing Bible texts in various formats and convert them into a
 format for easy and efficient use in Python.
 
+[![PyPI version](https://img.shields.io/pypi/v/pythonbible-parser?color=blue&logo=pypi&logoColor=lightgray)](https://pypi.org/project/pythonbible-parser/)
 [![license MIT](https://img.shields.io/badge/license-MIT-orange.svg)](https://opensource.org/licenses/MIT)
 
 ![Test](https://github.com/avendesora/pythonbible-parser/workflows/Test/badge.svg)
@@ -15,3 +16,9 @@ format for easy and efficient use in Python.
 
 > **WARNING**: This is very much still a work in progress and does not yet have a 
 > stable release. Breaking changes are expected.
+
+## Installation
+
+```shell script
+pip install pythonbible-parser
+```
