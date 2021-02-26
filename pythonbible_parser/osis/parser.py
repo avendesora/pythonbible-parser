@@ -3,7 +3,7 @@
 import os
 from functools import lru_cache
 from typing import Dict, List, Tuple
-from defusedxml.ElementTree import Element
+from xml.etree.ElementTree import Element
 
 import pythonbible as bible
 from defusedxml import ElementTree
