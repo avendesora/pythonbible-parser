@@ -54,7 +54,7 @@ class OSISParser(BibleParser):
         :return: the full title string
         """
         book_title_element: Element = self._get_book_title_element(book)
-        return book_title_element.text if book_title_element.text else ""
+        return book_title_element.text or ""
 
     @lru_cache(maxsize=None)
     def get_short_book_title(self, book: bible.Book) -> str:
@@ -89,7 +89,7 @@ class OSISParser(BibleParser):
         :return: the scripture passage text in a dictionary of books to
         dictionary of chapter numbers to lists of paragraph strings
         """
-        if verse_ids is None or len(verse_ids) == 0:
+        if verse_ids is None or not verse_ids:
             return {}
 
         # Sort the verse ids and the convert it into a tuple so it's hashable
@@ -364,5 +364,4 @@ def _get_element_tail(element: Element) -> str:
 @lru_cache(maxsize=None)
 def clean_paragraph(paragraph: str) -> str:
     cleaned_paragraph: str = paragraph.replace("¶", "").replace("  ", " ")
-    cleaned_paragraph = cleaned_paragraph.strip()
-    return cleaned_paragraph
+    return cleaned_paragraph.strip()
