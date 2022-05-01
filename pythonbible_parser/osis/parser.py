@@ -142,11 +142,9 @@ class OSISParser(BibleParser):
         self, verse_id: int, include_verse_number: bool
     ) -> str:
         paragraphs: Dict[bible.Book, Dict[int, List[str]]] = _get_paragraphs(
-            self.tree,
-            self.namespaces,
-            tuple([verse_id]),
-            include_verse_number,
+            self.tree, self.namespaces, (verse_id,), include_verse_number
         )
+
         verse_text: str = ""
 
         for chapters in paragraphs.values():
@@ -265,21 +263,21 @@ def _handle_child_element(
             include_verse_number,
         )
 
-    if tag in ["w", "transChange"] and not skip_till_next_verse:
+    if tag in {"w", "transChange"} and not skip_till_next_verse:
         return (
             _get_element_text_and_tail(child_element),
             skip_till_next_verse,
             current_verse_id,
         )
 
-    if tag in ["rdg"] and not skip_till_next_verse:
+    if tag in {"rdg"} and not skip_till_next_verse:
         return (
             _get_element_text(child_element),
             skip_till_next_verse,
             current_verse_id,
         )
 
-    if tag in ["q", "note"] and not skip_till_next_verse:
+    if tag in {"q", "note"} and not skip_till_next_verse:
         paragraph: str = ""
 
         if tag == "q":
