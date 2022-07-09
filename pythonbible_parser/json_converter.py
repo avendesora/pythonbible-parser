@@ -6,7 +6,7 @@ import pythonbible as bible
 
 from .bible_parser import BibleParser
 from .errors import InvalidBibleParserError
-from .osis.parser import OSISParser
+from .osis.old_osis_parser import OldOSISParser
 
 CURRENT_FOLDER: str = os.path.dirname(os.path.realpath(__file__))
 DATA_FOLDER: str = os.path.join(CURRENT_FOLDER, "data")
@@ -58,7 +58,7 @@ class JSONConverter:
 
         instance_identified: bool = False
 
-        if isinstance(self.parser, OSISParser):
+        if isinstance(self.parser, OldOSISParser):
             instance_identified = True
 
         if not instance_identified:

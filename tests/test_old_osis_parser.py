@@ -5,9 +5,9 @@ import pytest
 import pythonbible as bible
 
 from pythonbible_parser.bible_parser import BibleParser
-from pythonbible_parser.osis.parser import OSISParser
+from pythonbible_parser.osis.old_osis_parser import OldOSISParser
 
-DEFAULT_PARSER = OSISParser(bible.Version.KING_JAMES)
+DEFAULT_PARSER = OldOSISParser(bible.Version.KING_JAMES)
 
 
 def test_get_scripture_passage_text(
@@ -44,7 +44,7 @@ def test_get_asv_scripture_passage_text(
 ):
     # Given a list of verse ids
     # When we get the ASV scripture passage for those verses
-    parser: BibleParser = OSISParser(bible.Version.AMERICAN_STANDARD)
+    parser: BibleParser = OldOSISParser(bible.Version.AMERICAN_STANDARD)
     passage: Dict[bible.Book, Dict[int, List[str]]] = parser.get_scripture_passage_text(
         verse_ids_complex
     )
@@ -121,7 +121,7 @@ def test_exodus_20_3_asv() -> None:
     # When we get the verse text using the ASV parser
     references: List[bible.NormalizedReference] = bible.get_references(text)
     verse_id: int = bible.convert_references_to_verse_ids(references)[0]
-    parser: BibleParser = OSISParser(version=bible.Version.AMERICAN_STANDARD)
+    parser: BibleParser = OldOSISParser(version=bible.Version.AMERICAN_STANDARD)
     verse_text: str = parser.get_verse_text(verse_id)
 
     # Then the verse text is not missing any words.
@@ -134,7 +134,7 @@ def test_mark_9_38_kjv() -> None:
     verse_id: int = 41009038
 
     # When we get the verse text using the KJV parser
-    parser: BibleParser = OSISParser(version=bible.Version.KING_JAMES)
+    parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
     verse_text: str = parser.get_verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
@@ -151,7 +151,7 @@ def test_mark_9_43_kjv() -> None:
     verse_id: int = 41009043
 
     # When we get the verse text using the KJV parser
-    parser: BibleParser = OSISParser(version=bible.Version.KING_JAMES)
+    parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
     verse_text: str = parser.get_verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
@@ -168,7 +168,7 @@ def test_matthew_17_21_asv() -> None:
     verse_id: int = 40017021
 
     # When we get the verse text using the ASV parser
-    parser: BibleParser = OSISParser(version=bible.Version.AMERICAN_STANDARD)
+    parser: BibleParser = OldOSISParser(version=bible.Version.AMERICAN_STANDARD)
     verse_text: str = parser.get_verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
@@ -181,7 +181,7 @@ def test_1_chronicles_16_8_kjv() -> None:
     verse_id: int = 13016008
 
     # When we get the verse text using the KJV parser
-    parser: BibleParser = OSISParser(version=bible.Version.KING_JAMES)
+    parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
     verse_text: str = parser.get_verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
@@ -221,8 +221,8 @@ def test_scripture_text_caching_across_versions() -> None:
     verse_ids: List[int] = bible.convert_references_to_verse_ids(references)
 
     # When getting the scripture text multiple times from multiple versions
-    kjv_parser: BibleParser = OSISParser(version=bible.Version.KING_JAMES)
-    asv_parser: BibleParser = OSISParser(version=bible.Version.AMERICAN_STANDARD)
+    kjv_parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
+    asv_parser: BibleParser = OldOSISParser(version=bible.Version.AMERICAN_STANDARD)
 
     first_start_time: float = time.time()
     first_text: Dict[

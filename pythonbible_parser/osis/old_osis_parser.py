@@ -15,7 +15,16 @@ from pythonbible import (
 )
 
 from ..bible_parser import BibleParser, sort_paragraphs
-from .constants import BOOK_IDS, get_book_by_id
+from .constants import BOOK_IDS
+from .util import (
+    OSISID,
+    get_element_tail,
+    get_element_text,
+    get_element_text_and_tail,
+    get_namespace,
+    parse_osis_id,
+    strip_namespace_from_tag,
+)
 
 XML_FOLDER: str = os.path.join(os.path.dirname(os.path.realpath(__file__)), "versions")
 
@@ -25,7 +34,7 @@ XPATH_VERSE: str = ".//xmlns:verse[@osisID='{}.{}.{}']"
 XPATH_VERSE_PARENT: str = f"{XPATH_VERSE}/.."
 
 
-class OSISParser(BibleParser):
+class OldOSISParser(BibleParser):
     """
     Parse files containing scripture text in the OSIS format.
 
@@ -48,7 +57,7 @@ class OSISParser(BibleParser):
             os.path.join(XML_FOLDER, f"{self.version.value.lower()}.xml")
         )
         self.namespaces: Dict[str, str] = {
-            "xmlns": _get_namespace(self.tree.getroot().tag)
+            "xmlns": get_namespace(self.tree.getroot().tag)
         }
 
     @lru_cache()
@@ -71,7 +80,7 @@ class OSISParser(BibleParser):
         :return: the short title string
         """
         book_title_element: Element = self._get_book_title_element(book)
-        return book_title_element.get("short", "")
+        return book_title_element.get("short") or ""
 
     @lru_cache()
     def _get_book_title_element(self, book: Book) -> Element:
@@ -159,16 +168,6 @@ class OSISParser(BibleParser):
                 break
 
         return verse_text
-
-
-@lru_cache()
-def _get_namespace(tag: str) -> str:
-    return tag[tag.index("{") + 1 : tag.index("}")]
-
-
-@lru_cache()
-def _strip_namespace_from_tag(tag: str) -> str:
-    return tag.replace(_get_namespace(tag), "").replace("{", "").replace("}", "")
 
 
 def _get_paragraphs(
@@ -259,7 +258,7 @@ def _handle_child_element(
     include_verse_number: bool,
     inside_note: bool = False,
 ) -> Tuple[str, bool, int]:
-    tag: str = _strip_namespace_from_tag(child_element.tag)
+    tag: str = strip_namespace_from_tag(child_element.tag)
 
     if tag == "verse":
         return _handle_verse_tag(
@@ -275,7 +274,7 @@ def _handle_child_element(
 
     if tag == "rdg":
         return (
-            _get_element_text(child_element),
+            get_element_text(child_element),
             skip_till_next_verse,
             current_verse_id,
         )
@@ -286,7 +285,7 @@ def _handle_child_element(
 
     if tag in {"w", "transChange"}:
         return (
-            _get_element_text_and_tail(child_element),
+            get_element_text_and_tail(child_element),
             skip_till_next_verse,
             current_verse_id,
         )
@@ -294,7 +293,7 @@ def _handle_child_element(
     paragraph: str = ""
 
     if tag == "q":
-        paragraph += _get_element_text_and_tail(child_element)
+        paragraph += get_element_text_and_tail(child_element)
 
     new_current_verse_id: int = current_verse_id
 
@@ -315,7 +314,7 @@ def _handle_child_element(
         paragraph += grandchild_paragraph
 
     if tag == "seg":
-        paragraph += _get_element_tail(child_element)
+        paragraph += get_element_tail(child_element)
 
     return clean_paragraph(paragraph), skip_till_next_verse, new_current_verse_id
 
@@ -329,17 +328,17 @@ def _handle_verse_tag(
     include_verse_number: bool,
 ) -> Tuple[str, bool, int]:
     paragraph: str = ""
-    osis_id: str = child_element.get("osisID", "..")
+    osis_id_str: str = child_element.get("osisID") or ".."
 
-    if osis_id == "..":
+    if osis_id_str == "..":
         return paragraph, skip_till_next_verse, current_verse_id
 
-    book_id: str
-    chapter: str
-    verse: str
-    book_id, chapter, verse = osis_id.split(".")
-    book: Book = get_book_by_id(book_id)
-    verse_id: int = get_verse_id(book, int(chapter), int(verse))
+    osis_id: OSISID = parse_osis_id(osis_id_str)
+    verse_id: int = get_verse_id(
+        osis_id.book.value,
+        int(osis_id.chapter),
+        int(osis_id.verse),
+    )
 
     if verse_id in verse_ids:
         if skip_till_next_verse:
@@ -349,29 +348,14 @@ def _handle_verse_tag(
                 paragraph += "... "
 
         if include_verse_number:
-            paragraph += f"{verse}. "
+            paragraph += f"{osis_id.verse}. "
 
-        paragraph += _get_element_text_and_tail(child_element)
+        paragraph += get_element_text_and_tail(child_element)
 
         return paragraph, skip_till_next_verse, verse_id
 
     skip_till_next_verse = True
     return paragraph, skip_till_next_verse, current_verse_id
-
-
-@lru_cache()
-def _get_element_text_and_tail(element: Element) -> str:
-    return _get_element_text(element) + _get_element_tail(element)
-
-
-@lru_cache()
-def _get_element_text(element: Element) -> str:
-    return element.text.replace("\n", " ") if element.text else ""
-
-
-@lru_cache()
-def _get_element_tail(element: Element) -> str:
-    return element.tail.replace("\n", " ") if element.tail else ""
 
 
 @lru_cache()
