@@ -5,8 +5,14 @@ from functools import lru_cache
 from typing import Dict, List, Tuple
 from xml.etree.ElementTree import Element
 
-import pythonbible as bible
 from defusedxml import ElementTree
+from pythonbible import (
+    Book,
+    InvalidVerseError,
+    Version,
+    get_book_chapter_verse,
+    get_verse_id,
+)
 
 from ..bible_parser import BibleParser, sort_paragraphs
 from .constants import BOOK_IDS, get_book_by_id
@@ -27,7 +33,7 @@ class OSISParser(BibleParser):
     to parse XML files that are in the OSIS format.
     """
 
-    def __init__(self, version: bible.Version) -> None:
+    def __init__(self, version: Version) -> None:
         """
         Initialize the OSIS parser.
 
@@ -36,7 +42,7 @@ class OSISParser(BibleParser):
 
         :param version:
         """
-        super(OSISParser, self).__init__(version)
+        super().__init__(version)
 
         self.tree: ElementTree = ElementTree.parse(
             os.path.join(XML_FOLDER, f"{self.version.value.lower()}.xml")
@@ -45,8 +51,8 @@ class OSISParser(BibleParser):
             "xmlns": _get_namespace(self.tree.getroot().tag)
         }
 
-    @lru_cache(maxsize=None)
-    def get_book_title(self, book: bible.Book) -> str:
+    @lru_cache()
+    def get_book_title(self, book: Book) -> str:
         """
         Given a book, return the full title for that book from the XML file.
 
@@ -56,8 +62,8 @@ class OSISParser(BibleParser):
         book_title_element: Element = self._get_book_title_element(book)
         return book_title_element.text or ""
 
-    @lru_cache(maxsize=None)
-    def get_short_book_title(self, book: bible.Book) -> str:
+    @lru_cache()
+    def get_short_book_title(self, book: Book) -> str:
         """
         Given a book, return the short title for that book from the XML file.
 
@@ -67,14 +73,14 @@ class OSISParser(BibleParser):
         book_title_element: Element = self._get_book_title_element(book)
         return book_title_element.get("short", "")
 
-    @lru_cache(maxsize=None)
-    def _get_book_title_element(self, book: bible.Book) -> Element:
+    @lru_cache()
+    def _get_book_title_element(self, book: Book) -> Element:
         xpath: str = XPATH_BOOK_TITLE.format(BOOK_IDS.get(book))
         return self.tree.find(xpath, namespaces=self.namespaces)
 
     def get_scripture_passage_text(
         self, verse_ids: List[int], **kwargs
-    ) -> Dict[bible.Book, Dict[int, List[str]]]:
+    ) -> Dict[Book, Dict[int, List[str]]]:
         """
         Get the scripture passage for the given verse ids.
 
@@ -103,11 +109,11 @@ class OSISParser(BibleParser):
             verse_ids_tuple, include_verse_number
         )
 
-    @lru_cache(maxsize=None)
+    @lru_cache()
     def _get_scripture_passage_text_memoized(
         self, verse_ids, include_verse_number
-    ) -> Dict[bible.Book, Dict[int, List[str]]]:
-        paragraphs: Dict[bible.Book, Dict[int, List[str]]] = _get_paragraphs(
+    ) -> Dict[Book, Dict[int, List[str]]]:
+        paragraphs: Dict[Book, Dict[int, List[str]]] = _get_paragraphs(
             self.tree,
             self.namespaces,
             verse_ids,
@@ -130,18 +136,18 @@ class OSISParser(BibleParser):
         :return:
         """
         if verse_id is None:
-            raise bible.InvalidVerseError("Verse id cannot be None.")
+            raise InvalidVerseError("Verse id cannot be None.")
 
         # keyword arguments
         include_verse_number: bool = kwargs.get("include_verse_number", True)
 
         return self._get_verse_text_memoized(verse_id, include_verse_number)
 
-    @lru_cache(maxsize=None)
+    @lru_cache()
     def _get_verse_text_memoized(
         self, verse_id: int, include_verse_number: bool
     ) -> str:
-        paragraphs: Dict[bible.Book, Dict[int, List[str]]] = _get_paragraphs(
+        paragraphs: Dict[Book, Dict[int, List[str]]] = _get_paragraphs(
             self.tree, self.namespaces, (verse_id,), include_verse_number
         )
 
@@ -155,12 +161,12 @@ class OSISParser(BibleParser):
         return verse_text
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _get_namespace(tag: str) -> str:
     return tag[tag.index("{") + 1 : tag.index("}")]
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _strip_namespace_from_tag(tag: str) -> str:
     return tag.replace(_get_namespace(tag), "").replace("{", "").replace("}", "")
 
@@ -170,12 +176,12 @@ def _get_paragraphs(
     namespaces: Dict[str, str],
     verse_ids: Tuple[int, ...],
     include_verse_number: bool,
-) -> Dict[bible.Book, Dict[int, List[str]]]:
+) -> Dict[Book, Dict[int, List[str]]]:
     current_verse_id: int = verse_ids[0]
-    book: bible.Book
+    book: Book
     chapter: int
     verse: int
-    book, chapter, verse = bible.get_book_chapter_verse(current_verse_id)
+    book, chapter, verse = get_book_chapter_verse(current_verse_id)
     paragraph_element: Element = tree.find(
         XPATH_VERSE_PARENT.format(BOOK_IDS.get(book), chapter, verse), namespaces
     )
@@ -187,7 +193,7 @@ def _get_paragraphs(
         include_verse_number,
     )
     current_verse_index: int = verse_ids.index(current_verse_id) + 1
-    paragraph_dictionary: Dict[bible.Book, Dict[int, List[str]]] = {}
+    paragraph_dictionary: Dict[Book, Dict[int, List[str]]] = {}
 
     if current_verse_index < len(verse_ids):
         paragraph_dictionary = _get_paragraphs(
@@ -206,7 +212,7 @@ def _get_paragraphs(
     return paragraph_dictionary
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _get_paragraph_from_element(
     paragraph_element: Element,
     verse_ids: Tuple[int, ...],
@@ -244,13 +250,14 @@ def _get_paragraph_from_element(
     return paragraphs, new_current_verse_id
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _handle_child_element(
     child_element: Element,
     verse_ids: Tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,
     include_verse_number: bool,
+    inside_note: bool = False,
 ) -> Tuple[str, bool, int]:
     tag: str = _strip_namespace_from_tag(child_element.tag)
 
@@ -263,49 +270,57 @@ def _handle_child_element(
             include_verse_number,
         )
 
-    if tag in {"w", "transChange"} and not skip_till_next_verse:
-        return (
-            _get_element_text_and_tail(child_element),
-            skip_till_next_verse,
-            current_verse_id,
-        )
+    if skip_till_next_verse:
+        return "", skip_till_next_verse, current_verse_id
 
-    if tag in {"rdg"} and not skip_till_next_verse:
+    if tag == "rdg":
         return (
             _get_element_text(child_element),
             skip_till_next_verse,
             current_verse_id,
         )
 
-    if tag in {"q", "note"} and not skip_till_next_verse:
-        paragraph: str = ""
+    # If we are inside a note tag, only allow the "rdg" text to be included
+    if inside_note:
+        return "", skip_till_next_verse, current_verse_id
 
-        if tag == "q":
-            paragraph += _get_element_text_and_tail(child_element)
+    if tag in {"w", "transChange"}:
+        return (
+            _get_element_text_and_tail(child_element),
+            skip_till_next_verse,
+            current_verse_id,
+        )
 
-        new_current_verse_id: int = current_verse_id
+    paragraph: str = ""
 
-        for grandchild_element in list(child_element):
-            (
-                grandchild_paragraph,
-                skip_till_next_verse,
-                new_current_verse_id,
-            ) = _handle_child_element(
-                grandchild_element,
-                verse_ids,
-                skip_till_next_verse,
-                current_verse_id,
-                include_verse_number,
-            )
+    if tag == "q":
+        paragraph += _get_element_text_and_tail(child_element)
 
-            paragraph += grandchild_paragraph
+    new_current_verse_id: int = current_verse_id
 
-        return clean_paragraph(paragraph), skip_till_next_verse, new_current_verse_id
+    for grandchild_element in list(child_element):
+        (
+            grandchild_paragraph,
+            skip_till_next_verse,
+            new_current_verse_id,
+        ) = _handle_child_element(
+            grandchild_element,
+            verse_ids,
+            skip_till_next_verse,
+            current_verse_id,
+            include_verse_number,
+            tag == "note",
+        )
 
-    return "", skip_till_next_verse, current_verse_id
+        paragraph += grandchild_paragraph
+
+    if tag == "seg":
+        paragraph += _get_element_tail(child_element)
+
+    return clean_paragraph(paragraph), skip_till_next_verse, new_current_verse_id
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _handle_verse_tag(
     child_element: Element,
     verse_ids: Tuple[int, ...],
@@ -323,8 +338,8 @@ def _handle_verse_tag(
     chapter: str
     verse: str
     book_id, chapter, verse = osis_id.split(".")
-    book: bible.Book = get_book_by_id(book_id)
-    verse_id: int = bible.get_verse_id(book, int(chapter), int(verse))
+    book: Book = get_book_by_id(book_id)
+    verse_id: int = get_verse_id(book, int(chapter), int(verse))
 
     if verse_id in verse_ids:
         if skip_till_next_verse:
@@ -344,22 +359,22 @@ def _handle_verse_tag(
     return paragraph, skip_till_next_verse, current_verse_id
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _get_element_text_and_tail(element: Element) -> str:
     return _get_element_text(element) + _get_element_tail(element)
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _get_element_text(element: Element) -> str:
     return element.text.replace("\n", " ") if element.text else ""
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def _get_element_tail(element: Element) -> str:
     return element.tail.replace("\n", " ") if element.tail else ""
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def clean_paragraph(paragraph: str) -> str:
     cleaned_paragraph: str = paragraph.replace("¶", "").replace("  ", " ")
     return cleaned_paragraph.strip()

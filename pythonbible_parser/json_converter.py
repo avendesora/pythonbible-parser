@@ -68,7 +68,7 @@ class JSONConverter:
         for verse_id in self.verse_ids:
             book_id: int = bible.get_book_number(verse_id)
 
-            if book_id in self.books.keys():
+            if book_id in self.books:
                 continue
 
             book: bible.Book
