@@ -68,7 +68,7 @@ class JSONConverter:
         for verse_id in self.verse_ids:
             book_id: int = bible.get_book_number(verse_id)
 
-            if book_id in self.books.keys():
+            if book_id in self.books:
                 continue
 
             book: bible.Book
@@ -85,7 +85,7 @@ class JSONConverter:
                 verse_id, include_verse_number=False
             )
 
-            if verse_text is None or len(verse_text.strip()) == 0:
+            if verse_text is None or not verse_text.strip():
                 print(f"Verse {verse_id} is empty.")
 
             self.verses[verse_id] = verse_text
