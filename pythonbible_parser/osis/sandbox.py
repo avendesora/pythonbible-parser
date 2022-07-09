@@ -14,7 +14,7 @@ with open("versions/asv.xml", "r") as reader:
                 in_tag = False
             break
 
-        if current_tag and (len(character.strip()) == 0 or character in {">", "/"}):
+        if current_tag and (not character.strip() or character in {">", "/"}):
             tags.add(current_tag)
             current_tag = ""
             in_tag = False
@@ -31,8 +31,6 @@ with open("versions/asv.xml", "r") as reader:
 
     print(f"Total number of characters = {number_of_characters}.")
 
-    sorted_tags = list(tags)
-    sorted_tags.sort()
-
+    sorted_tags = sorted(tags)
     for tag in sorted_tags:
         print(tag)
