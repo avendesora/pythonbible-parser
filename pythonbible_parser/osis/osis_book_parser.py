@@ -58,62 +58,76 @@ class OSISBookParser:
 
         if tag == "div":
             self._process_children(element)
+            return
 
-        elif tag == "p":
+        if tag == "p":
             self._handle_paragraph(element)
+            return
 
-        elif tag == "chapter":
+        if tag == "chapter":
             self._handle_chapter(element)
+            return
 
-        elif tag == "title":
+        if tag == "title":
             self._handle_title(element)
+            return
 
-        elif tag == "verse":
+        if tag == "verse":
             self._append_text(get_element_text(element))
             self._handle_verse(element)
             self._append_text(get_element_tail(element))
+            return
 
-        elif tag in {"w", "transChange"}:
+        if tag in {"w", "transChange"}:
             self._append_text(get_element_text_and_tail(element))
+            return
 
-        elif tag == "q":
+        if tag == "q":
             self._append_text(get_element_text(element))
             self._process_children(element)
             self._append_text(get_element_tail(element))
+            return
 
-        elif tag == "lg":
+        if tag == "lg":
             # TODO - figure out poetic material formatting
             self._process_children(element)
+            return
 
-        elif tag == "l":
+        if tag == "l":
             # TODO - figure out poetic material formatting
             self._process_children(element)
+            return
 
-        elif tag == "lb":
+        if tag == "lb":
             # TODO - insert line break
             self._append_text(get_element_text_and_tail(element))
+            return
 
-        elif tag == "list":
+        if tag == "list":
             # TODO - formatting?
             self._process_children(element)
+            return
 
-        elif tag == "item":
+        if tag == "item":
             # TODO - formatting?
             self._process_children(element)
+            return
 
-        elif tag == "seg":
+        if tag == "seg":
             # TODO ?
             self._process_children(element)
             self._append_text(get_element_tail(element))
+            return
 
-        elif tag == "divineName":
+        if tag == "divineName":
             # TODO ?
             self._process_children(element)
+            return
 
-        elif tag == "note":
+        if tag == "note":
             # ignore for now
             # TODO - notes (note, reference, rdg, rdgGroup)
-            ...
+            return
 
         else:
             self.unknown_tags.add(tag)
