@@ -50,9 +50,7 @@ def clean_html(content: str) -> str:
 
     cleaned_content: str = content
 
-    if cleaned_content.endswith("<p>"):
-        cleaned_content = cleaned_content[:-3]
-
+    cleaned_content = cleaned_content.removesuffix("<p>")
     if not cleaned_content.startswith("<p>"):
         cleaned_content = f"<p>{cleaned_content}"
 
