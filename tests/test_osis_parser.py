@@ -13,6 +13,75 @@ def get_parser(version: bible.Version) -> OSISParser:
     return parser
 
 
+@lru_cache()
+def get_plain_text_bible(version: bible.Version) -> Bible:
+    parser = get_parser(version)
+    return Bible(
+        parser.version,
+        parser.plain_text,
+        parser.plain_text_verse_start_indeces,
+        parser.plain_text_verse_end_indeces,
+    )
+
+
+@lru_cache()
+def get_plain_text_readers_bible(version: bible.Version) -> Bible:
+    parser = get_parser(version)
+    return Bible(
+        parser.version,
+        parser.plain_text_readers,
+        parser.plain_text_readers_verse_start_indeces,
+        parser.plain_text_readers_verse_end_indeces,
+    )
+
+
+@lru_cache()
+def get_plain_text_notes_bible(version: bible.Version) -> Bible:
+    parser = get_parser(version)
+    return Bible(
+        parser.version,
+        parser.plain_text_notes,
+        parser.plain_text_notes_verse_start_indeces,
+        parser.plain_text_notes_verse_end_indeces,
+    )
+
+
+@lru_cache()
+def get_html_bible(version: bible.Version) -> Bible:
+    parser = get_parser(version)
+    return Bible(
+        parser.version,
+        parser.html,
+        parser.html_verse_start_indeces,
+        parser.html_verse_end_indeces,
+        True,
+    )
+
+
+@lru_cache()
+def get_html_readers_bible(version: bible.Version) -> Bible:
+    parser = get_parser(version)
+    return Bible(
+        parser.version,
+        parser.html_readers,
+        parser.html_readers_verse_start_indeces,
+        parser.html_readers_verse_end_indeces,
+        True,
+    )
+
+
+@lru_cache()
+def get_html_notes_bible(version: bible.Version) -> Bible:
+    parser = get_parser(version)
+    return Bible(
+        parser.version,
+        parser.html_notes,
+        parser.html_notes_verse_start_indeces,
+        parser.html_notes_verse_end_indeces,
+        True,
+    )
+
+
 def test_exodus_20_3_asv() -> None:
     """Test for https://github.com/avendesora/pythonbible/issues/9!"""
     # Given the verse id for Exodus 20:3
@@ -20,17 +89,29 @@ def test_exodus_20_3_asv() -> None:
 
     # When we get the verse text using the ASV parser
     version: bible.Version = bible.Version.AMERICAN_STANDARD
-    parser: OSISParser = get_parser(version)
-    asv_plain: Bible = Bible(
-        version,
-        parser.plain_text,
-        parser.plain_text_verse_start_indeces,
-        parser.plain_text_verse_end_indeces,
-    )
-    verse_text: str = asv_plain.get_scripture(verse_id)
+    plain_bible: Bible = get_plain_text_bible(version)
+    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
+    html_bible: Bible = get_html_bible(version)
+    html_readers_bible: Bible = get_html_readers_bible(version)
+    html_notes_bible: Bible = get_html_notes_bible(version)
+    verse_text: str = plain_bible.get_scripture(verse_id)
+    verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
+    verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
+    verse_text_html: str = html_bible.get_scripture(verse_id)
+    verse_text_html_readers: str = html_readers_bible.get_scripture(verse_id)
+    verse_text_html_notes: str = html_notes_bible.get_scripture(verse_id)
 
     # Then the verse text is not missing any words.
     assert verse_text == "3. Thou shalt have no other gods before me."
+    assert verse_text_readers == "Thou shalt have no other gods before me."
+    assert verse_text_notes == verse_text
+    assert (
+        verse_text_html == "<p><sup>3</sup> Thou shalt have no other gods before me."
+        "</p>"
+    )
+    assert verse_text_html_readers == "<p>Thou shalt have no other gods before me.</p>"
+    assert verse_text_html_notes == verse_text_html
 
 
 def test_mark_9_38_kjv() -> None:
@@ -40,21 +121,42 @@ def test_mark_9_38_kjv() -> None:
 
     # When we get the verse text using the KJV parser
     version: bible.Version = bible.Version.KING_JAMES
-    parser: OSISParser = get_parser(version)
-    kjv_plain: Bible = Bible(
-        version,
-        parser.plain_text,
-        parser.plain_text_verse_start_indeces,
-        parser.plain_text_verse_end_indeces,
-    )
-    verse_text: str = kjv_plain.get_scripture(verse_id)
+    plain_bible: Bible = get_plain_text_bible(version)
+    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
+    html_bible: Bible = get_html_bible(version)
+    html_readers_bible: Bible = get_html_readers_bible(version)
+    html_notes_bible: Bible = get_html_notes_bible(version)
+    verse_text: str = plain_bible.get_scripture(verse_id)
+    verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
+    verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
+    verse_text_html: str = html_bible.get_scripture(verse_id)
+    verse_text_html_readers: str = html_readers_bible.get_scripture(verse_id)
+    verse_text_html_notes: str = html_notes_bible.get_scripture(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert (
-        verse_text == "38. And John answered him, saying, Master, we saw one "
-        "casting out devils in thy name, and he followeth not us: "
-        "and we forbad him, because he followeth not us."
+        verse_text == "38. And John answered him, saying, Master, we saw one casting "
+        "out devils in thy name, and he followeth not us: and we forbad him, because "
+        "he followeth not us."
     )
+    assert (
+        verse_text_readers == "And John answered him, saying, Master, we saw one "
+        "casting out devils in thy name, and he followeth not us: and we forbad him, "
+        "because he followeth not us."
+    )
+    assert verse_text_notes == verse_text
+    assert (
+        verse_text_html == "<p><sup>38</sup> And John answered him, saying, Master, we "
+        "saw one casting out devils in thy name, and he followeth not us: and we "
+        "forbad him, because he followeth not us.</p>"
+    )
+    assert (
+        verse_text_html_readers == "<p>And John answered him, saying, Master, we saw "
+        "one casting out devils in thy name, and he followeth not us: and we forbad "
+        "him, because he followeth not us.</p>"
+    )
+    assert verse_text_html_notes == verse_text_html
 
 
 def test_mark_9_43_kjv() -> None:
@@ -64,21 +166,42 @@ def test_mark_9_43_kjv() -> None:
 
     # When we get the verse text using the KJV parser
     version: bible.Version = bible.Version.KING_JAMES
-    parser: OSISParser = get_parser(version)
-    kjv_plain: Bible = Bible(
-        version,
-        parser.plain_text,
-        parser.plain_text_verse_start_indeces,
-        parser.plain_text_verse_end_indeces,
-    )
-    verse_text: str = kjv_plain.get_scripture(verse_id)
+    plain_bible: Bible = get_plain_text_bible(version)
+    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
+    html_bible: Bible = get_html_bible(version)
+    html_readers_bible: Bible = get_html_readers_bible(version)
+    html_notes_bible: Bible = get_html_notes_bible(version)
+    verse_text: str = plain_bible.get_scripture(verse_id)
+    verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
+    verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
+    verse_text_html: str = html_bible.get_scripture(verse_id)
+    verse_text_html_readers: str = html_readers_bible.get_scripture(verse_id)
+    verse_text_html_notes: str = html_notes_bible.get_scripture(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert (
-        verse_text == "43. And if thy hand offend thee, cut it off: it is "
-        "better for thee to enter into life maimed, than having two hands "
-        "to go into hell, into the fire that never shall be quenched:"
+        verse_text == "43. And if thy hand offend thee, cut it off: it is better for "
+        "thee to enter into life maimed, than having two hands to go into hell, into "
+        "the fire that never shall be quenched:"
     )
+    assert (
+        verse_text_readers == "And if thy hand offend thee, cut it off: it is better "
+        "for thee to enter into life maimed, than having two hands to go into hell, "
+        "into the fire that never shall be quenched:"
+    )
+    assert verse_text_notes == verse_text
+    assert (
+        verse_text_html == "<p><sup>43</sup> And if thy hand offend thee, cut it off: "
+        "it is better for thee to enter into life maimed, than having two hands to go "
+        "into hell, into the fire that never shall be quenched:</p>"
+    )
+    assert (
+        verse_text_html_readers == "<p>And if thy hand offend thee, cut it off: it is "
+        "better for thee to enter into life maimed, than having two hands to go into "
+        "hell, into the fire that never shall be quenched:</p>"
+    )
+    assert verse_text_html_notes == verse_text_html
 
 
 def test_matthew_17_21_asv() -> None:
@@ -88,17 +211,32 @@ def test_matthew_17_21_asv() -> None:
 
     # When we get the verse text using the ASV parser
     version: bible.Version = bible.Version.AMERICAN_STANDARD
-    parser: OSISParser = get_parser(version)
-    asv_plain: Bible = Bible(
-        version,
-        parser.plain_text,
-        parser.plain_text_verse_start_indeces,
-        parser.plain_text_verse_end_indeces,
-    )
-    verse_text: str = asv_plain.get_scripture(verse_id)
+    plain_bible: Bible = get_plain_text_bible(version)
+    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
+    html_bible: Bible = get_html_bible(version)
+    html_readers_bible: Bible = get_html_readers_bible(version)
+    html_notes_bible: Bible = get_html_notes_bible(version)
+    verse_text: str = plain_bible.get_scripture(verse_id)
+    verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
+    verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
+    verse_text_html: str = html_bible.get_scripture(verse_id)
+    verse_text_html_readers: str = html_readers_bible.get_scripture(verse_id)
+    verse_text_html_notes: str = html_notes_bible.get_scripture(verse_id)
 
     # Then there are no errors and the verse text is as expected
-    assert verse_text == "21. But this kind goeth not out save by prayer and fasting."
+    assert verse_text == "21."
+    assert verse_text_readers == ""
+    assert (
+        verse_text_notes == "21. But this kind goeth not out save by prayer and "
+        "fasting."
+    )
+    assert verse_text_html == "<p><sup>21</sup></p>"
+    assert verse_text_html_readers == ""
+    assert (
+        verse_text_html_notes == "<p><sup>21</sup> But this kind goeth not out save by "
+        "prayer and fasting.</p>"
+    )
 
 
 def test_1_chronicles_16_8_kjv() -> None:
@@ -108,17 +246,35 @@ def test_1_chronicles_16_8_kjv() -> None:
 
     # When we get the verse text using the KJV parser
     version: bible.Version = bible.Version.KING_JAMES
-    parser: OSISParser = get_parser(version)
-    kjv_plain: Bible = Bible(
-        version,
-        parser.plain_text,
-        parser.plain_text_verse_start_indeces,
-        parser.plain_text_verse_end_indeces,
-    )
-    verse_text: str = kjv_plain.get_scripture(verse_id)
+    plain_bible: Bible = get_plain_text_bible(version)
+    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
+    html_bible: Bible = get_html_bible(version)
+    html_readers_bible: Bible = get_html_readers_bible(version)
+    html_notes_bible: Bible = get_html_notes_bible(version)
+    verse_text: str = plain_bible.get_scripture(verse_id)
+    verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
+    verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
+    verse_text_html: str = html_bible.get_scripture(verse_id)
+    verse_text_html_readers: str = html_readers_bible.get_scripture(verse_id)
+    verse_text_html_notes: str = html_notes_bible.get_scripture(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert (
         verse_text == "8. Give thanks unto the LORD, call upon his name, make known "
         "his deeds among the people."
     )
+    assert (
+        verse_text_readers == "Give thanks unto the LORD, call upon his name, make "
+        "known his deeds among the people."
+    )
+    assert verse_text_notes == verse_text
+    assert (
+        verse_text_html == "<p><sup>8</sup> Give thanks unto the LORD, call upon his "
+        "name, make known his deeds among the people.</p>"
+    )
+    assert (
+        verse_text_html_readers == "<p>Give thanks unto the LORD, call upon his name, "
+        "make known his deeds among the people.</p>"
+    )
+    assert verse_text_html_notes == verse_text_html

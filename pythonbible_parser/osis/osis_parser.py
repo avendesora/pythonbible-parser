@@ -54,24 +54,32 @@ class OSISParser:
 
         self.html: str = ""
         self.html_readers: str = ""
+        self.html_notes: str = ""
         self.plain_text: str = ""
         self.plain_text_readers: str = ""
+        self.plain_text_notes: str = ""
 
         self.html_verse_start_indeces: Dict[int, int] = {}
         self.html_readers_verse_start_indeces: Dict[int, int] = {}
+        self.html_notes_verse_start_indeces: Dict[int, int] = {}
         self.plain_text_verse_start_indeces: Dict[int, int] = {}
         self.plain_text_readers_verse_start_indeces: Dict[int, int] = {}
+        self.plain_text_notes_verse_start_indeces: Dict[int, int] = {}
 
         self.html_verse_end_indeces: Dict[int, int] = {}
         self.html_readers_verse_end_indeces: Dict[int, int] = {}
+        self.html_notes_verse_end_indeces: Dict[int, int] = {}
         self.plain_text_verse_end_indeces: Dict[int, int] = {}
         self.plain_text_readers_verse_end_indeces: Dict[int, int] = {}
+        self.plain_text_notes_verse_end_indeces: Dict[int, int] = {}
 
     def parse(self):
         html_offset: int = 0
         html_readers_offset: int = 0
+        html_notes_offset: int = 0
         plain_text_offset: int = 0
         plain_text_readers_offset: int = 0
+        plain_text_notes_offset: int = 0
 
         for book in bible.Book:
             book_element = self._get_book_element(book)
@@ -83,24 +91,33 @@ class OSISParser:
                 book_element,
                 html_offset,
                 html_readers_offset,
+                html_notes_offset,
                 plain_text_offset,
                 plain_text_readers_offset,
+                plain_text_notes_offset,
             )
             book_parser.parse()
 
             self.html += book_parser.html
             self.html_readers += book_parser.html_readers
+            self.html_notes += book_parser.html_notes
             self.plain_text += book_parser.plain_text
             self.plain_text_readers += book_parser.plain_text_readers
+            self.plain_text_notes += book_parser.plain_text_notes
 
             html_offset = len(self.html)
             html_readers_offset = len(self.html_readers)
+            html_notes_offset = len(self.html_notes)
             plain_text_offset = len(self.plain_text)
             plain_text_readers_offset = len(self.plain_text_readers)
+            plain_text_notes_offset = len(self.plain_text_notes)
 
             self.html_verse_start_indeces.update(book_parser.html_verse_start_indeces)
             self.html_readers_verse_start_indeces.update(
                 book_parser.html_readers_verse_start_indeces
+            )
+            self.html_notes_verse_start_indeces.update(
+                book_parser.html_notes_verse_start_indeces
             )
             self.plain_text_verse_start_indeces.update(
                 book_parser.plain_text_verse_start_indeces
@@ -108,16 +125,25 @@ class OSISParser:
             self.plain_text_readers_verse_start_indeces.update(
                 book_parser.plain_text_readers_verse_start_indeces
             )
+            self.plain_text_notes_verse_start_indeces.update(
+                book_parser.plain_text_notes_verse_start_indeces
+            )
 
             self.html_verse_end_indeces.update(book_parser.html_verse_end_indeces)
             self.html_readers_verse_end_indeces.update(
                 book_parser.html_readers_verse_end_indeces
+            )
+            self.html_notes_verse_end_indeces.update(
+                book_parser.html_notes_verse_end_indeces
             )
             self.plain_text_verse_end_indeces.update(
                 book_parser.plain_text_verse_end_indeces
             )
             self.plain_text_readers_verse_end_indeces.update(
                 book_parser.plain_text_readers_verse_end_indeces
+            )
+            self.plain_text_notes_verse_end_indeces.update(
+                book_parser.plain_text_notes_verse_end_indeces
             )
 
     def write(self):
@@ -136,6 +162,12 @@ class OSISParser:
         )
         self._write_file(
             version_folder,
+            "html_notes.py",
+            f"{version_str}_html_notes",
+            self.html_notes,
+        )
+        self._write_file(
+            version_folder,
             "plain_text.py",
             f"{version_str}_plain_text",
             self.plain_text,
@@ -145,6 +177,12 @@ class OSISParser:
             "plain_text_readers.py",
             f"{version_str}_plain_text_readers",
             self.plain_text_readers,
+        )
+        self._write_file(
+            version_folder,
+            "plain_text_notes.py",
+            f"{version_str}_plain_text_notes",
+            self.plain_text_notes,
         )
 
     def _get_book_element(self, book: bible.Book):
