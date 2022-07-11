@@ -226,13 +226,13 @@ def test_matthew_17_21_asv() -> None:
 
     # Then there are no errors and the verse text is as expected
     assert verse_text == "21."
-    assert verse_text_readers == ""
+    assert not verse_text_readers
     assert (
         verse_text_notes == "21. But this kind goeth not out save by prayer and "
         "fasting."
     )
     assert verse_text_html == "<p><sup>21</sup></p>"
-    assert verse_text_html_readers == ""
+    assert not verse_text_html_readers
     assert (
         verse_text_html_notes == "<p><sup>21</sup> But this kind goeth not out save by "
         "prayer and fasting.</p>"
