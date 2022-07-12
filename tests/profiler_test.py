@@ -1,7 +1,7 @@
 import pythonbible as bible
 
 from pythonbible_parser.formatter import format_scripture_text_with_parser
-from pythonbible_parser.osis.old_parser import OSISParser
+from pythonbible_parser.osis.old_osis_parser import OldOSISParser
 
 
 def profile_books() -> None:
@@ -40,11 +40,11 @@ def profile_format_scripture_text(book: bible.Book) -> None:
         references = bible.get_references(reference_string)
         verse_ids = bible.convert_references_to_verse_ids(references)
         format_scripture_text_with_parser(
-            verse_ids, OSISParser(bible.versions.DEFAULT_VERSION)
+            verse_ids, OldOSISParser(bible.versions.DEFAULT_VERSION)
         )
 
 
-# % scalene tests/profiler.py
-if __name__ == "__main__":
-    # profile_books()
-    profile_book(bible.Book.JAMES)
+# % scalene tests/profiler_test.py
+# if __name__ == "__main__":
+#     # profile_books()
+#     profile_book(bible.Book.JAMES)
