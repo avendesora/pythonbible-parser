@@ -1,5 +1,4 @@
 from typing import Dict, Set
-from xml.etree.ElementTree import Element
 
 from pythonbible import get_verse_id
 
@@ -15,7 +14,7 @@ from pythonbible_parser.osis.util import (
 class OSISBookParser:
     def __init__(
         self,
-        root: Element,
+        root,
         html_offset: int,
         html_readers_offset: int,
         html_notes_offset: int,
@@ -23,7 +22,7 @@ class OSISBookParser:
         plain_text_readers_offset: int,
         plain_text_notes_offset: int,
     ) -> None:
-        self.root: Element = root
+        self.root = root
         self.html_offset: int = html_offset
         self.html_readers_offset: int = html_readers_offset
         self.html_notes_offset: int = html_notes_offset
@@ -63,7 +62,7 @@ class OSISBookParser:
         self._process_element(self.root, False)
         self._set_verse_end_indeces()
 
-    def _process_element(self, element: Element, in_notes: bool) -> None:
+    def _process_element(self, element, in_notes: bool) -> None:
         tag: str = strip_namespace_from_tag(element.tag)
 
         if tag in {"div", "lg", "l", "list", "item", "divineName", "note"}:
@@ -119,11 +118,11 @@ class OSISBookParser:
         else:
             self.unknown_tags.add(tag)
 
-    def _process_children(self, element: Element, in_notes: bool) -> None:
+    def _process_children(self, element, in_notes: bool) -> None:
         for child in element:
             self._process_element(child, in_notes)
 
-    def _handle_paragraph(self, element: Element) -> None:
+    def _handle_paragraph(self, element) -> None:
         self.html += "<p>"
         self.html_readers += "<p>"
         self.html_notes += "<p>"
@@ -141,14 +140,14 @@ class OSISBookParser:
         self._set_verse_end_indeces()
         self.current_verse = 0
 
-    def _handle_title(self, element: Element) -> None:
+    def _handle_title(self, element) -> None:
         if self.title and self.short_title:
             return
 
         self.title = element.text or ""
         self.short_title = element.get("short") or ""
 
-    def _handle_verse(self, element: Element) -> None:
+    def _handle_verse(self, element) -> None:
         osis_id_str = element.get("osisID")
 
         if osis_id_str is None:

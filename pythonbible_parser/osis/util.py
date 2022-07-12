@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from functools import lru_cache
-from xml.etree.ElementTree import Element
 
 from pythonbible import Book
 
@@ -18,17 +17,17 @@ def strip_namespace_from_tag(tag: str) -> str:
 
 
 @lru_cache()
-def get_element_text_and_tail(element: Element) -> str:
+def get_element_text_and_tail(element) -> str:
     return get_element_text(element) + get_element_tail(element)
 
 
 @lru_cache()
-def get_element_text(element: Element) -> str:
+def get_element_text(element) -> str:
     return element.text.replace("\n", " ") if element.text else ""
 
 
 @lru_cache()
-def get_element_tail(element: Element) -> str:
+def get_element_tail(element) -> str:
     return element.tail.replace("\n", " ") if element.tail else ""
 
 

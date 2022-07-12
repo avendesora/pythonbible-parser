@@ -3,7 +3,6 @@
 import os
 from functools import lru_cache
 from typing import Dict, List, Tuple
-from xml.etree.ElementTree import Element
 
 from defusedxml import ElementTree
 from pythonbible import (
@@ -68,7 +67,7 @@ class OldOSISParser(BibleParser):
         :param book:
         :return: the full title string
         """
-        book_title_element: Element = self._get_book_title_element(book)
+        book_title_element = self._get_book_title_element(book)
         return book_title_element.text or ""
 
     @lru_cache()
@@ -79,11 +78,11 @@ class OldOSISParser(BibleParser):
         :param book:
         :return: the short title string
         """
-        book_title_element: Element = self._get_book_title_element(book)
+        book_title_element = self._get_book_title_element(book)
         return book_title_element.get("short") or ""
 
     @lru_cache()
-    def _get_book_title_element(self, book: Book) -> Element:
+    def _get_book_title_element(self, book: Book):
         xpath: str = XPATH_BOOK_TITLE.format(BOOK_IDS.get(book))
         return self.tree.find(xpath, namespaces=self.namespaces)
 
@@ -181,7 +180,7 @@ def _get_paragraphs(
     chapter: int
     verse: int
     book, chapter, verse = get_book_chapter_verse(current_verse_id)
-    paragraph_element: Element = tree.find(
+    paragraph_element = tree.find(
         XPATH_VERSE_PARENT.format(BOOK_IDS.get(book), chapter, verse), namespaces
     )
     paragraphs: List[str]
@@ -213,7 +212,7 @@ def _get_paragraphs(
 
 @lru_cache()
 def _get_paragraph_from_element(
-    paragraph_element: Element,
+    paragraph_element,
     verse_ids: Tuple[int, ...],
     current_verse_id: int,
     include_verse_number: bool,
@@ -251,7 +250,7 @@ def _get_paragraph_from_element(
 
 @lru_cache()
 def _handle_child_element(
-    child_element: Element,
+    child_element,
     verse_ids: Tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,
@@ -321,7 +320,7 @@ def _handle_child_element(
 
 @lru_cache()
 def _handle_verse_tag(
-    child_element: Element,
+    child_element,
     verse_ids: Tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,
