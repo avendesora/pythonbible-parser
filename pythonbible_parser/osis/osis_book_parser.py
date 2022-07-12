@@ -66,8 +66,11 @@ class OSISBookParser:
     def _process_element(self, element: Element, in_notes: bool) -> None:
         tag: str = strip_namespace_from_tag(element.tag)
 
-        if tag == "div":
-            self._process_children(element, in_notes)
+        if tag in {"div", "lg", "l", "list", "item", "divineName", "note"}:
+            # TODO - figure out poetical material formatting
+            # TODO - figure out list formatting
+            # TODO - figure out item formatting
+            self._process_children(element, in_notes or tag == "note")
             return
 
         if tag == "p":
@@ -98,44 +101,15 @@ class OSISBookParser:
             self._append_text(get_element_tail(element), in_notes)
             return
 
-        if tag == "lg":
-            # TODO - figure out poetic material formatting
-            self._process_children(element, in_notes)
-            return
-
-        if tag == "l":
-            # TODO - figure out poetic material formatting
-            self._process_children(element, in_notes)
-            return
-
         if tag == "lb":
             # TODO - insert line break
             self._append_text(get_element_text_and_tail(element), in_notes)
-            return
-
-        if tag == "list":
-            # TODO - formatting?
-            self._process_children(element, in_notes)
-            return
-
-        if tag == "item":
-            # TODO - formatting?
-            self._process_children(element, in_notes)
             return
 
         if tag == "seg":
             # TODO ?
             self._process_children(element, in_notes)
             self._append_text(get_element_tail(element), in_notes)
-            return
-
-        if tag == "divineName":
-            # TODO ?
-            self._process_children(element, in_notes)
-            return
-
-        if tag == "note":
-            self._process_children(element, True)
             return
 
         if tag == "rdg" and in_notes:
