@@ -17,7 +17,7 @@ format for easy and efficient use in Python.
 
 [![Python 3.10](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20dev-blue?logo=python&logoColor=lightgray)](https://www.python.org/downloads/)
 
-> **WARNING**: This is very much still a work in progress and does not yet have a 
+> **WARNING**: This is very much still a work in progress and does not yet have a
 > stable release. Breaking changes are expected.
 
 ## Installation
