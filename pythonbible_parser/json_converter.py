@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import json
 import os
+from logging import warning
 
 import pythonbible as bible
 
 from .bible_parser import BibleParser
 from .errors import InvalidBibleParserError
 from .osis.old_osis_parser import OldOSISParser
-
-from logging import warning
 
 CURRENT_FOLDER: str = os.path.dirname(os.path.realpath(__file__))
 DATA_FOLDER: str = os.path.join(CURRENT_FOLDER, "data")

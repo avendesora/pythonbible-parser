@@ -32,9 +32,7 @@ def profile_book(book: bible.Book) -> None:
     profile_format_scripture_text(book)
 
     info("--> get unformatted verse text")
-    bible.format_scripture_text(
-        verse_ids, one_verse_per_paragraph=True
-    )
+    bible.format_scripture_text(verse_ids, one_verse_per_paragraph=True)
 
 
 def profile_format_scripture_text(book: bible.Book) -> None:
