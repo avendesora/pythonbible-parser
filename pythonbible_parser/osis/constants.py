@@ -1,9 +1,9 @@
-from typing import Dict
+from __future__ import annotations
 
 import pythonbible as bible
 
 # noinspection SpellCheckingInspection
-BOOK_IDS: Dict[bible.Book, str] = {
+BOOK_IDS: dict[bible.Book, str] = {
     bible.Book.GENESIS: "Gen",
     bible.Book.EXODUS: "Exod",
     bible.Book.LEVITICUS: "Lev",

@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import json
 import os
-from typing import Dict, List, Tuple
+from logging import warning
 
 import pythonbible as bible
 
 from .bible_parser import BibleParser
 from .errors import InvalidBibleParserError
-from .osis.parser import OSISParser
+from .osis.old_osis_parser import OldOSISParser
 
 CURRENT_FOLDER: str = os.path.dirname(os.path.realpath(__file__))
 DATA_FOLDER: str = os.path.join(CURRENT_FOLDER, "data")
@@ -28,9 +30,9 @@ class JSONConverter:
         """
         self.parser: BibleParser = parser
         self.data_folder: str = kwargs.get("data_folder", DATA_FOLDER)
-        self.verse_ids: List[int] = kwargs.get("verse_ids", bible.verses.VERSE_IDS)
-        self.books: Dict[int, Tuple[str, str]] = {}
-        self.verses: Dict[int, str] = {}
+        self.verse_ids: list[int] = kwargs.get("verse_ids", bible.verses.VERSE_IDS)
+        self.books: dict[int, tuple[str, str]] = {}
+        self.verses: dict[int, str] = {}
 
     def generate_book_file(self) -> None:
         """
@@ -58,7 +60,7 @@ class JSONConverter:
 
         instance_identified: bool = False
 
-        if isinstance(self.parser, OSISParser):
+        if isinstance(self.parser, OldOSISParser):
             instance_identified = True
 
         if not instance_identified:
@@ -86,7 +88,7 @@ class JSONConverter:
             )
 
             if verse_text is None or not verse_text.strip():
-                print(f"Verse {verse_id} is empty.")
+                warning(f"Verse {verse_id} is empty.")
 
             self.verses[verse_id] = verse_text
 
