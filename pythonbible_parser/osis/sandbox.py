@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 number_of_characters: int = 0
 tags: set[str] = set()
 current_tag: str = ""

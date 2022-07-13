@@ -1,4 +1,4 @@
-from typing import Dict, Set
+from __future__ import annotations
 
 from pythonbible import get_verse_id
 
@@ -40,23 +40,23 @@ class OSISBookParser:
         self.plain_text_readers: str = ""
         self.plain_text_notes: str = ""
 
-        self.html_verse_start_indeces: Dict[int, int] = {}
-        self.html_readers_verse_start_indeces: Dict[int, int] = {}
-        self.html_notes_verse_start_indeces: Dict[int, int] = {}
-        self.plain_text_verse_start_indeces: Dict[int, int] = {}
-        self.plain_text_readers_verse_start_indeces: Dict[int, int] = {}
-        self.plain_text_notes_verse_start_indeces: Dict[int, int] = {}
+        self.html_verse_start_indeces: dict[int, int] = {}
+        self.html_readers_verse_start_indeces: dict[int, int] = {}
+        self.html_notes_verse_start_indeces: dict[int, int] = {}
+        self.plain_text_verse_start_indeces: dict[int, int] = {}
+        self.plain_text_readers_verse_start_indeces: dict[int, int] = {}
+        self.plain_text_notes_verse_start_indeces: dict[int, int] = {}
 
-        self.html_verse_end_indeces: Dict[int, int] = {}
-        self.html_readers_verse_end_indeces: Dict[int, int] = {}
-        self.html_notes_verse_end_indeces: Dict[int, int] = {}
-        self.plain_text_verse_end_indeces: Dict[int, int] = {}
-        self.plain_text_readers_verse_end_indeces: Dict[int, int] = {}
-        self.plain_text_notes_verse_end_indeces: Dict[int, int] = {}
+        self.html_verse_end_indeces: dict[int, int] = {}
+        self.html_readers_verse_end_indeces: dict[int, int] = {}
+        self.html_notes_verse_end_indeces: dict[int, int] = {}
+        self.plain_text_verse_end_indeces: dict[int, int] = {}
+        self.plain_text_readers_verse_end_indeces: dict[int, int] = {}
+        self.plain_text_notes_verse_end_indeces: dict[int, int] = {}
 
         self.current_verse: int = 0
 
-        self.unknown_tags: Set = set()
+        self.unknown_tags: set[str] = set()
 
     def parse(self) -> None:
         self._process_element(self.root, False)

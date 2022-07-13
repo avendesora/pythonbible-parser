@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pythonbible as bible
 
 from pythonbible_parser.formatter import format_scripture_text_with_parser

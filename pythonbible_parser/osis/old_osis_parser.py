@@ -1,8 +1,9 @@
 """Contains the parser for OSIS format files."""
 
+from __future__ import annotations
+
 import os
 from functools import lru_cache
-from typing import Dict, List, Tuple
 
 from defusedxml import ElementTree
 from pythonbible import (
@@ -55,7 +56,7 @@ class OldOSISParser(BibleParser):
         self.tree: ElementTree = ElementTree.parse(
             os.path.join(XML_FOLDER, f"{self.version.value.lower()}.xml")
         )
-        self.namespaces: Dict[str, str] = {
+        self.namespaces: dict[str, str] = {
             "xmlns": get_namespace(self.tree.getroot().tag)
         }
 
@@ -87,8 +88,8 @@ class OldOSISParser(BibleParser):
         return self.tree.find(xpath, namespaces=self.namespaces)
 
     def get_scripture_passage_text(
-        self, verse_ids: List[int], **kwargs
-    ) -> Dict[Book, Dict[int, List[str]]]:
+        self, verse_ids: list[int], **kwargs
+    ) -> dict[Book, dict[int, list[str]]]:
         """
         Get the scripture passage for the given verse ids.
 
@@ -120,8 +121,8 @@ class OldOSISParser(BibleParser):
     @lru_cache()
     def _get_scripture_passage_text_memoized(
         self, verse_ids, include_verse_number
-    ) -> Dict[Book, Dict[int, List[str]]]:
-        paragraphs: Dict[Book, Dict[int, List[str]]] = _get_paragraphs(
+    ) -> dict[Book, dict[int, list[str]]]:
+        paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
             self.tree,
             self.namespaces,
             verse_ids,
@@ -155,7 +156,7 @@ class OldOSISParser(BibleParser):
     def _get_verse_text_memoized(
         self, verse_id: int, include_verse_number: bool
     ) -> str:
-        paragraphs: Dict[Book, Dict[int, List[str]]] = _get_paragraphs(
+        paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
             self.tree, self.namespaces, (verse_id,), include_verse_number
         )
 
@@ -171,10 +172,10 @@ class OldOSISParser(BibleParser):
 
 def _get_paragraphs(
     tree: ElementTree,
-    namespaces: Dict[str, str],
-    verse_ids: Tuple[int, ...],
+    namespaces: dict[str, str],
+    verse_ids: tuple[int, ...],
     include_verse_number: bool,
-) -> Dict[Book, Dict[int, List[str]]]:
+) -> dict[Book, dict[int, list[str]]]:
     current_verse_id: int = verse_ids[0]
     book: Book
     chapter: int
@@ -183,7 +184,7 @@ def _get_paragraphs(
     paragraph_element = tree.find(
         XPATH_VERSE_PARENT.format(BOOK_IDS.get(book), chapter, verse), namespaces
     )
-    paragraphs: List[str]
+    paragraphs: list[str]
     paragraphs, current_verse_id = _get_paragraph_from_element(
         paragraph_element,
         verse_ids,
@@ -191,7 +192,7 @@ def _get_paragraphs(
         include_verse_number,
     )
     current_verse_index: int = verse_ids.index(current_verse_id) + 1
-    paragraph_dictionary: Dict[Book, Dict[int, List[str]]] = {}
+    paragraph_dictionary: dict[Book, dict[int, list[str]]] = {}
 
     if current_verse_index < len(verse_ids):
         paragraph_dictionary = _get_paragraphs(
@@ -201,8 +202,8 @@ def _get_paragraphs(
             include_verse_number,
         )
 
-    book_dictionary: Dict[int, List[str]] = paragraph_dictionary.get(book, {})
-    chapter_list: List[str] = book_dictionary.get(int(chapter), [])
+    book_dictionary: dict[int, list[str]] = paragraph_dictionary.get(book, {})
+    chapter_list: list[str] = book_dictionary.get(int(chapter), [])
     paragraphs.extend(chapter_list)
     book_dictionary[int(chapter)] = paragraphs
     paragraph_dictionary[book] = book_dictionary
@@ -213,12 +214,12 @@ def _get_paragraphs(
 @lru_cache()
 def _get_paragraph_from_element(
     paragraph_element,
-    verse_ids: Tuple[int, ...],
+    verse_ids: tuple[int, ...],
     current_verse_id: int,
     include_verse_number: bool,
-) -> Tuple[List[str], int]:
+) -> tuple[list[str], int]:
     new_current_verse_id: int = current_verse_id
-    paragraphs: List[str] = []
+    paragraphs: list[str] = []
     paragraph: str = ""
     skip_till_next_verse: bool = False
     child_paragraph: str
@@ -251,12 +252,12 @@ def _get_paragraph_from_element(
 @lru_cache()
 def _handle_child_element(
     child_element,
-    verse_ids: Tuple[int, ...],
+    verse_ids: tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,
     include_verse_number: bool,
     inside_note: bool = False,
-) -> Tuple[str, bool, int]:
+) -> tuple[str, bool, int]:
     tag: str = strip_namespace_from_tag(child_element.tag)
 
     if tag == "verse":
@@ -321,11 +322,11 @@ def _handle_child_element(
 @lru_cache()
 def _handle_verse_tag(
     child_element,
-    verse_ids: Tuple[int, ...],
+    verse_ids: tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,
     include_verse_number: bool,
-) -> Tuple[str, bool, int]:
+) -> tuple[str, bool, int]:
     paragraph: str = ""
     osis_id_str: str = child_element.get("osisID") or ".."
 

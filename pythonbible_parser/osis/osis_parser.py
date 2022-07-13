@@ -1,8 +1,9 @@
 """Contains the parser for OSIS format files."""
 
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
-from typing import Dict
 
 import pythonbible as bible
 from defusedxml import ElementTree
@@ -48,7 +49,7 @@ class OSISParser:
         self.tree: ElementTree = ElementTree.parse(
             os.path.join(INPUT_FOLDER, f"{version.value.lower()}.xml")
         )
-        self.namespaces: Dict[str, str] = {
+        self.namespaces: dict[str, str] = {
             "xmlns": get_namespace(self.tree.getroot().tag)
         }
 
@@ -59,19 +60,19 @@ class OSISParser:
         self.plain_text_readers: str = ""
         self.plain_text_notes: str = ""
 
-        self.html_verse_start_indeces: Dict[int, int] = {}
-        self.html_readers_verse_start_indeces: Dict[int, int] = {}
-        self.html_notes_verse_start_indeces: Dict[int, int] = {}
-        self.plain_text_verse_start_indeces: Dict[int, int] = {}
-        self.plain_text_readers_verse_start_indeces: Dict[int, int] = {}
-        self.plain_text_notes_verse_start_indeces: Dict[int, int] = {}
+        self.html_verse_start_indeces: dict[int, int] = {}
+        self.html_readers_verse_start_indeces: dict[int, int] = {}
+        self.html_notes_verse_start_indeces: dict[int, int] = {}
+        self.plain_text_verse_start_indeces: dict[int, int] = {}
+        self.plain_text_readers_verse_start_indeces: dict[int, int] = {}
+        self.plain_text_notes_verse_start_indeces: dict[int, int] = {}
 
-        self.html_verse_end_indeces: Dict[int, int] = {}
-        self.html_readers_verse_end_indeces: Dict[int, int] = {}
-        self.html_notes_verse_end_indeces: Dict[int, int] = {}
-        self.plain_text_verse_end_indeces: Dict[int, int] = {}
-        self.plain_text_readers_verse_end_indeces: Dict[int, int] = {}
-        self.plain_text_notes_verse_end_indeces: Dict[int, int] = {}
+        self.html_verse_end_indeces: dict[int, int] = {}
+        self.html_readers_verse_end_indeces: dict[int, int] = {}
+        self.html_notes_verse_end_indeces: dict[int, int] = {}
+        self.plain_text_verse_end_indeces: dict[int, int] = {}
+        self.plain_text_readers_verse_end_indeces: dict[int, int] = {}
+        self.plain_text_notes_verse_end_indeces: dict[int, int] = {}
 
     def parse(self):
         html_offset: int = 0

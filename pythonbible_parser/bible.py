@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from functools import lru_cache
-from typing import Dict, Optional
 
 from pythonbible import InvalidVerseError, Version, is_valid_verse_id
 
@@ -9,18 +10,18 @@ class Bible:
         self,
         version: Version,
         content: str,
-        verse_start_indices: Dict[int, int],
-        verse_end_indices: Dict[int, int],
+        verse_start_indices: dict[int, int],
+        verse_end_indices: dict[int, int],
         is_html: bool = False,
     ):
         self.version: Version = version
         self.content: str = content
-        self.verse_start_indices: Dict[int, int] = verse_start_indices
-        self.verse_end_indices: Dict[int, int] = verse_end_indices
+        self.verse_start_indices: dict[int, int] = verse_start_indices
+        self.verse_end_indices: dict[int, int] = verse_end_indices
         self.is_html: bool = is_html
 
     @lru_cache()
-    def get_scripture(self, start_verse_id: int, end_verse_id: Optional[int] = None):
+    def get_scripture(self, start_verse_id: int, end_verse_id: int | None = None):
         if not is_valid_verse_id(start_verse_id):
             raise InvalidVerseError(
                 f"start verse id ({start_verse_id}) is not a valid verse id."

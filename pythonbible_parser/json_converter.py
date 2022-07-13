@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 import os
-from typing import Dict, List, Tuple
 
 import pythonbible as bible
 
@@ -28,9 +29,9 @@ class JSONConverter:
         """
         self.parser: BibleParser = parser
         self.data_folder: str = kwargs.get("data_folder", DATA_FOLDER)
-        self.verse_ids: List[int] = kwargs.get("verse_ids", bible.verses.VERSE_IDS)
-        self.books: Dict[int, Tuple[str, str]] = {}
-        self.verses: Dict[int, str] = {}
+        self.verse_ids: list[int] = kwargs.get("verse_ids", bible.verses.VERSE_IDS)
+        self.books: dict[int, tuple[str, str]] = {}
+        self.verses: dict[int, str] = {}
 
     def generate_book_file(self) -> None:
         """

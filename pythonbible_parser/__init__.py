@@ -3,4 +3,6 @@ pythonbible-parser is a Python library for parsing Bible texts in various format
 and convert them into a format for easy and efficient use in Python.
 """
 
+from __future__ import annotations
+
 __version__ = "0.0.3"

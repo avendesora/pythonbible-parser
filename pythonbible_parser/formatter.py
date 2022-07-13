@@ -1,21 +1,21 @@
-from typing import Any, Callable, List, Optional
+from __future__ import annotations
 
 from pythonbible_parser.bible_parser import BibleParser
 
 
 def format_scripture_text_with_parser(
-    verse_ids: List[int],
+    verse_ids: list[int],
     parser: BibleParser,
     full_title: bool = False,
     format_type: str = "html",
     include_verse_numbers: bool = True,
 ) -> str:
-    title_function: Callable[[Any], Any] = (
+    title_function = (
         parser.get_book_title if full_title else parser.get_short_book_title
     )
     text: str = ""
 
-    paragraphs: Any = parser.get_scripture_passage_text(
+    paragraphs = parser.get_scripture_passage_text(
         verse_ids, include_verse_number=include_verse_numbers
     )
 
@@ -46,7 +46,7 @@ def _format_chapter(chapter: int, format_type: str) -> str:
     return f"Chapter {chapter}\n\n"
 
 
-def _format_paragraph(paragraph: Optional[str], format_type: str) -> str:
+def _format_paragraph(paragraph: str | None, format_type: str) -> str:
     if format_type == "html":
         return f"<p>{paragraph}</p>\n"
 

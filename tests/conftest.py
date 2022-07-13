@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from collections import OrderedDict
-from typing import Dict, List
 
 import pytest
 import pythonbible as bible
@@ -16,7 +17,7 @@ def invalid_verse_id() -> int:
 
 
 @pytest.fixture
-def verse_ids_complex() -> List[int]:
+def verse_ids_complex() -> list[int]:
     return [
         19130004,
         19130008,
@@ -70,7 +71,7 @@ def verse_text() -> str:
 
 
 @pytest.fixture
-def kjv_passage() -> Dict[bible.Book, Dict[int, List[str]]]:
+def kjv_passage() -> dict[bible.Book, dict[int, list[str]]]:
     return OrderedDict(
         [
             (
@@ -153,7 +154,7 @@ def kjv_passage() -> Dict[bible.Book, Dict[int, List[str]]]:
 
 
 @pytest.fixture
-def kjv_passage_no_verse_numbers() -> Dict[bible.Book, Dict[int, List[str]]]:
+def kjv_passage_no_verse_numbers() -> dict[bible.Book, dict[int, list[str]]]:
     return OrderedDict(
         [
             (
@@ -236,7 +237,7 @@ def kjv_passage_no_verse_numbers() -> Dict[bible.Book, Dict[int, List[str]]]:
 
 
 @pytest.fixture
-def asv_passage() -> Dict[bible.Book, Dict[int, List[str]]]:
+def asv_passage() -> dict[bible.Book, dict[int, list[str]]]:
     return OrderedDict(
         [
             (
