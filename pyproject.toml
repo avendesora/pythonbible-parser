@@ -47,3 +47,6 @@ dev = [
 ]
 all = [
 ]
+
+[tool.isort]
+profile = "black"
