@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
+from typing import Any
 
 from defusedxml import ElementTree
 from pythonbible import (
@@ -42,7 +43,7 @@ class OldOSISParser(BibleParser):
     to parse XML files that are in the OSIS format.
     """
 
-    def __init__(self, version: Version) -> None:
+    def __init__(self: OldOSISParser, version: Version) -> None:
         """
         Initialize the OSIS parser.
 
@@ -61,7 +62,7 @@ class OldOSISParser(BibleParser):
         }
 
     @lru_cache()
-    def get_book_title(self, book: Book) -> str:
+    def get_book_title(self: OldOSISParser, book: Book) -> str:
         """
         Given a book, return the full title for that book from the XML file.
 
@@ -72,7 +73,7 @@ class OldOSISParser(BibleParser):
         return book_title_element.text or ""
 
     @lru_cache()
-    def get_short_book_title(self, book: Book) -> str:
+    def get_short_book_title(self: OldOSISParser, book: Book) -> str:
         """
         Given a book, return the short title for that book from the XML file.
 
@@ -83,12 +84,12 @@ class OldOSISParser(BibleParser):
         return book_title_element.get("short") or ""
 
     @lru_cache()
-    def _get_book_title_element(self, book: Book):
+    def _get_book_title_element(self: OldOSISParser, book: Book) -> Any:
         xpath: str = XPATH_BOOK_TITLE.format(BOOK_IDS.get(book))
         return self.tree.find(xpath, namespaces=self.namespaces)
 
     def get_scripture_passage_text(
-        self, verse_ids: list[int], **kwargs
+        self: OldOSISParser, verse_ids: list[int], **kwargs: Any | None
     ) -> dict[Book, dict[int, list[str]]]:
         """
         Get the scripture passage for the given verse ids.
@@ -120,7 +121,9 @@ class OldOSISParser(BibleParser):
 
     @lru_cache()
     def _get_scripture_passage_text_memoized(
-        self, verse_ids, include_verse_number
+        self: OldOSISParser,
+        verse_ids: tuple[int],
+        include_verse_number: bool,
     ) -> dict[Book, dict[int, list[str]]]:
         paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
             self.tree,
@@ -131,7 +134,11 @@ class OldOSISParser(BibleParser):
 
         return sort_paragraphs(paragraphs)
 
-    def get_verse_text(self, verse_id: int, **kwargs) -> str:
+    def get_verse_text(
+        self: OldOSISParser,
+        verse_id: int,
+        **kwargs: Any | None,
+    ) -> str:
         """
         Get the scripture text for the given verse id.
 
@@ -154,7 +161,7 @@ class OldOSISParser(BibleParser):
 
     @lru_cache()
     def _get_verse_text_memoized(
-        self, verse_id: int, include_verse_number: bool
+        self: OldOSISParser, verse_id: int, include_verse_number: bool
     ) -> str:
         paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
             self.tree, self.namespaces, (verse_id,), include_verse_number
@@ -213,7 +220,7 @@ def _get_paragraphs(
 
 @lru_cache()
 def _get_paragraph_from_element(
-    paragraph_element,
+    paragraph_element: Any,
     verse_ids: tuple[int, ...],
     current_verse_id: int,
     include_verse_number: bool,
@@ -251,7 +258,7 @@ def _get_paragraph_from_element(
 
 @lru_cache()
 def _handle_child_element(
-    child_element,
+    child_element: Any,
     verse_ids: tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,
@@ -321,7 +328,7 @@ def _handle_child_element(
 
 @lru_cache()
 def _handle_verse_tag(
-    child_element,
+    child_element: Any,
     verse_ids: tuple[int, ...],
     skip_till_next_verse: bool,
     current_verse_id: int,

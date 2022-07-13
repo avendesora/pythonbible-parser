@@ -29,7 +29,7 @@ def test_invalid_end_verse() -> None:
         bible.get_scripture(start_verse_id, end_verse_id)
 
 
-def test_start_verse_none():
+def test_start_verse_none() -> None:
     # Given an null start verse id and a Bible instance
     start_verse_id = None
     bible = Bible(Version.KING_JAMES, "content", {1: 1}, {1: 1}, False)

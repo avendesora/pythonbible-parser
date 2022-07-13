@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from typing import Any
 
 import pythonbible as bible
 from defusedxml import ElementTree
@@ -34,7 +35,7 @@ class OSISParser:
     to parse XML files that are in the OSIS format.
     """
 
-    def __init__(self, version: bible.Version) -> None:
+    def __init__(self: OSISParser, version: bible.Version) -> None:
         """
         Initialize the OSIS parser.
 
@@ -74,7 +75,7 @@ class OSISParser:
         self.plain_text_readers_verse_end_indeces: dict[int, int] = {}
         self.plain_text_notes_verse_end_indeces: dict[int, int] = {}
 
-    def parse(self):
+    def parse(self: OSISParser) -> None:
         html_offset: int = 0
         html_readers_offset: int = 0
         html_notes_offset: int = 0
@@ -147,7 +148,7 @@ class OSISParser:
                 book_parser.plain_text_notes_verse_end_indeces
             )
 
-    def write(self):
+    def write(self: OSISParser) -> None:
         version_str: str = self.version.value.lower()
         version_folder: str = os.path.join(OUTPUT_FOLDER, version_str)
 
@@ -186,11 +187,11 @@ class OSISParser:
             self.plain_text_notes,
         )
 
-    def _get_book_element(self, book: bible.Book):
+    def _get_book_element(self: OSISParser, book: bible.Book) -> Any:
         xpath: str = XPATH_BOOK.format(BOOK_IDS.get(book))
         return self.tree.find(xpath, namespaces=self.namespaces)
 
     @staticmethod
-    def _write_file(folder, filename, variable, value):
+    def _write_file(folder: str, filename: str, variable: str, value: str) -> None:
         with open(os.path.join(folder, filename), "w") as writer:
             writer.write(f'{variable} = """{value}"""')

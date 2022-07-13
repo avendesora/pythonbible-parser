@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections import OrderedDict
+from typing import Any
 
 import pythonbible as bible
 
@@ -15,7 +16,7 @@ class BibleParser:
     parsers (e.g. OSIS, USFM, USFX, etc.) for parsing scripture text.
     """
 
-    def __init__(self, version: bible.Version) -> None:
+    def __init__(self: BibleParser, version: bible.Version) -> None:
         """
         Initialize the Bible parser with the version.
 
@@ -24,7 +25,7 @@ class BibleParser:
         self.version: bible.Version = version
 
     @abstractmethod
-    def get_book_title(self, book: bible.Book) -> str:
+    def get_book_title(self: BibleParser, book: bible.Book) -> str:
         """
         Given a book, return the full title for that book from the XML file.
 
@@ -33,7 +34,7 @@ class BibleParser:
         """
 
     @abstractmethod
-    def get_short_book_title(self, book: bible.Book) -> str:
+    def get_short_book_title(self: BibleParser, book: bible.Book) -> str:
         """
         Given a book, return the short title for that book from the XML file.
 
@@ -43,7 +44,9 @@ class BibleParser:
 
     @abstractmethod
     def get_scripture_passage_text(
-        self, verse_ids: list[int], **kwargs
+        self: BibleParser,
+        verse_ids: list[int],
+        **kwargs: Any | None,
     ) -> dict[bible.Book, dict[int, list[str]]]:
         """
         Get the scripture passage for the given verse ids.
@@ -60,7 +63,7 @@ class BibleParser:
         """
 
     @abstractmethod
-    def get_verse_text(self, verse_id: int, **kwargs) -> str:
+    def get_verse_text(self: BibleParser, verse_id: int, **kwargs: Any | None) -> str:
         """
         Get the scripture text for the given verse id.
 
@@ -75,7 +78,9 @@ class BibleParser:
         """
 
 
-def sort_paragraphs(paragraphs: dict[bible.Book, dict[int, list[str]]]):
+def sort_paragraphs(
+    paragraphs: dict[bible.Book, dict[int, list[str]]]
+) -> dict[bible.Book, dict[int, list[str]]]:
     """
     Sort paragraphs of scripture text.
 

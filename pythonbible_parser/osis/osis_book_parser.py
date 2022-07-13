@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pythonbible import get_verse_id
 
 from pythonbible_parser.osis.util import (
@@ -13,8 +15,8 @@ from pythonbible_parser.osis.util import (
 
 class OSISBookParser:
     def __init__(
-        self,
-        root,
+        self: OSISBookParser,
+        root: Any,
         html_offset: int,
         html_readers_offset: int,
         html_notes_offset: int,
@@ -22,7 +24,7 @@ class OSISBookParser:
         plain_text_readers_offset: int,
         plain_text_notes_offset: int,
     ) -> None:
-        self.root = root
+        self.root: Any = root
         self.html_offset: int = html_offset
         self.html_readers_offset: int = html_readers_offset
         self.html_notes_offset: int = html_notes_offset
@@ -58,11 +60,11 @@ class OSISBookParser:
 
         self.unknown_tags: set[str] = set()
 
-    def parse(self) -> None:
+    def parse(self: OSISBookParser) -> None:
         self._process_element(self.root, False)
         self._set_verse_end_indeces()
 
-    def _process_element(self, element, in_notes: bool) -> None:
+    def _process_element(self: OSISBookParser, element: Any, in_notes: bool) -> None:
         tag: str = strip_namespace_from_tag(element.tag)
 
         if tag in {"div", "lg", "l", "list", "item", "divineName", "note"}:
@@ -118,11 +120,11 @@ class OSISBookParser:
         else:
             self.unknown_tags.add(tag)
 
-    def _process_children(self, element, in_notes: bool) -> None:
+    def _process_children(self: OSISBookParser, element: Any, in_notes: bool) -> None:
         for child in element:
             self._process_element(child, in_notes)
 
-    def _handle_paragraph(self, element) -> None:
+    def _handle_paragraph(self: OSISBookParser, element: Any) -> None:
         self.html += "<p>"
         self.html_readers += "<p>"
         self.html_notes += "<p>"
@@ -136,18 +138,18 @@ class OSISBookParser:
         self.html_readers += "</p>"
         self.html_notes += "</p>"
 
-    def _handle_chapter(self) -> None:
+    def _handle_chapter(self: OSISBookParser) -> None:
         self._set_verse_end_indeces()
         self.current_verse = 0
 
-    def _handle_title(self, element) -> None:
+    def _handle_title(self: OSISBookParser, element: Any) -> None:
         if self.title and self.short_title:
             return
 
         self.title = element.text or ""
         self.short_title = element.get("short") or ""
 
-    def _handle_verse(self, element) -> None:
+    def _handle_verse(self: OSISBookParser, element: Any) -> None:
         osis_id_str = element.get("osisID")
 
         if osis_id_str is None:
@@ -189,7 +191,7 @@ class OSISBookParser:
 
         self.plain_text_notes += f"{osis_id.verse}."
 
-    def _append_text(self, text, in_notes: bool = False) -> None:
+    def _append_text(self: OSISBookParser, text: str, in_notes: bool = False) -> None:
         text = text.strip() if text else ""
         text = text.replace("¶", "")
 
@@ -239,7 +241,7 @@ class OSISBookParser:
         self.html_notes += text
         self.plain_text_notes += text
 
-    def _set_verse_end_indeces(self) -> None:
+    def _set_verse_end_indeces(self: OSISBookParser) -> None:
         if self.current_verse > 0:
             self.html_verse_end_indeces[self.current_verse] = (
                 len(self.html) + self.html_offset
@@ -260,7 +262,7 @@ class OSISBookParser:
                 len(self.plain_text_notes) + self.plain_text_notes_offset
             )
 
-    def _set_verse_start_indeces(self) -> None:
+    def _set_verse_start_indeces(self: OSISBookParser) -> None:
         self.html_verse_start_indeces[self.current_verse] = (
             len(self.html) + self.html_offset
         )

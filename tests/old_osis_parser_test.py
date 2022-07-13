@@ -27,7 +27,7 @@ def test_get_scripture_passage_text(
 def test_get_scripture_passage_text_no_numbers(
     verse_ids_complex: list[int],
     kjv_passage_no_verse_numbers: dict[bible.Book, dict[int, list[str]]],
-):
+) -> None:
     # Given a list of verse ids
     # When we get the scripture passage for those verses
     passage: dict[
@@ -42,7 +42,7 @@ def test_get_scripture_passage_text_no_numbers(
 
 def test_get_asv_scripture_passage_text(
     verse_ids_complex: list[int], asv_passage: dict[bible.Book, dict[int, list[str]]]
-):
+) -> None:
     # Given a list of verse ids
     # When we get the ASV scripture passage for those verses
     parser: BibleParser = OldOSISParser(bible.Version.AMERICAN_STANDARD)

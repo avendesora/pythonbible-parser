@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
+from typing import Any
 
 from pythonbible import Book
 
@@ -19,17 +20,17 @@ def strip_namespace_from_tag(tag: str) -> str:
 
 
 @lru_cache()
-def get_element_text_and_tail(element) -> str:
+def get_element_text_and_tail(element: Any) -> str:
     return get_element_text(element) + get_element_tail(element)
 
 
 @lru_cache()
-def get_element_text(element) -> str:
+def get_element_text(element: Any) -> str:
     return element.text.replace("\n", " ") if element.text else ""
 
 
 @lru_cache()
-def get_element_tail(element) -> str:
+def get_element_tail(element: Any) -> str:
     return element.tail.replace("\n", " ") if element.tail else ""
 
 
