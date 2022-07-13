@@ -7,7 +7,7 @@ tags: set[str] = set()
 current_tag: str = ""
 in_tag: bool = False
 
-with open("versions/asv.xml", "r") as reader:
+with open("versions/asv.xml", "r", encoding="utf-8") as reader:
     while True:
         character: str = reader.read(1)
 

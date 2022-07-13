@@ -12,12 +12,14 @@ DEFAULT_PARSER = OldOSISParser(bible.Version.KING_JAMES)
 
 
 def test_get_scripture_passage_text(
-    verse_ids_complex: list[int], kjv_passage: dict[bible.Book, dict[int, list[str]]]
+    verse_ids_complex: list[int],
+    kjv_passage: dict[bible.Book, dict[int, list[str]]],
 ) -> None:
     # Given a list of verse ids
     # When we get the scripture passage for those verses
     passage: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = DEFAULT_PARSER.get_scripture_passage_text(verse_ids_complex)
 
     # Then the scripture passage is correct.
@@ -31,9 +33,11 @@ def test_get_scripture_passage_text_no_numbers(
     # Given a list of verse ids
     # When we get the scripture passage for those verses
     passage: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = DEFAULT_PARSER.get_scripture_passage_text(
-        verse_ids_complex, include_verse_number=False
+        verse_ids_complex,
+        include_verse_number=False,
     )
 
     # Then the scripture passage is correct.
@@ -41,13 +45,14 @@ def test_get_scripture_passage_text_no_numbers(
 
 
 def test_get_asv_scripture_passage_text(
-    verse_ids_complex: list[int], asv_passage: dict[bible.Book, dict[int, list[str]]]
+    verse_ids_complex: list[int],
+    asv_passage: dict[bible.Book, dict[int, list[str]]],
 ) -> None:
     # Given a list of verse ids
     # When we get the ASV scripture passage for those verses
     parser: BibleParser = OldOSISParser(bible.Version.AMERICAN_STANDARD)
     passage: dict[bible.Book, dict[int, list[str]]] = parser.get_scripture_passage_text(
-        verse_ids_complex
+        verse_ids_complex,
     )
 
     # Then the scripture passage is correct.
@@ -56,12 +61,13 @@ def test_get_asv_scripture_passage_text(
 
 def test_get_scripture_passage_ellipsis() -> None:
     passage: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = DEFAULT_PARSER.get_scripture_passage_text(
         [
             1001003,
             1001005,
-        ]
+        ],
     )
 
     genesis_paragraphs: dict[int, list[str]] | None = passage.get(bible.Book.GENESIS)
@@ -86,13 +92,13 @@ def test_get_short_book_title() -> None:
 
 
 def test_get_scripture_passage_null() -> None:
-    assert len(DEFAULT_PARSER.get_scripture_passage_text(None)) == 0
+    assert not DEFAULT_PARSER.get_scripture_passage_text(None)
 
 
 def test_get_verse_text(verse_id: int, verse_text: str) -> None:
     # Given a verse id
     # When we get the scripture text for that verse id
-    actual_text: str = DEFAULT_PARSER.get_verse_text(verse_id)
+    actual_text: str = DEFAULT_PARSER.verse_text(verse_id)
 
     # Then it is what we expect it to be.
     assert actual_text == verse_text
@@ -103,7 +109,7 @@ def test_get_verse_text_null() -> None:
     # When we attempt to get the scripture text for that verse id
     # Then it raise an InvalidVerseError
     with pytest.raises(bible.InvalidVerseError):
-        DEFAULT_PARSER.get_verse_text(None)
+        DEFAULT_PARSER.verse_text(None)
 
 
 def test_get_verse_text_invalid_verse(invalid_verse_id: int) -> None:
@@ -111,11 +117,11 @@ def test_get_verse_text_invalid_verse(invalid_verse_id: int) -> None:
     # When we attempt to get the scripture text for that verse id
     # Then it raise an InvalidVerseError
     with pytest.raises(bible.InvalidVerseError):
-        DEFAULT_PARSER.get_verse_text(invalid_verse_id)
+        DEFAULT_PARSER.verse_text(invalid_verse_id)
 
 
 def test_exodus_20_3_asv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/9!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/9."""
     # Given the reference Exodus 20:3
     text: str = "Exodus 20:3"
 
@@ -123,20 +129,20 @@ def test_exodus_20_3_asv() -> None:
     references: list[bible.NormalizedReference] = bible.get_references(text)
     verse_id: int = bible.convert_references_to_verse_ids(references)[0]
     parser: BibleParser = OldOSISParser(version=bible.Version.AMERICAN_STANDARD)
-    verse_text: str = parser.get_verse_text(verse_id)
+    verse_text: str = parser.verse_text(verse_id)
 
     # Then the verse text is not missing any words.
     assert verse_text == "3. Thou shalt have no other gods before me."
 
 
 def test_mark_9_38_kjv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/12!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/12."""
     # Given the verse id for Mark 9:38
     verse_id: int = 41009038
 
     # When we get the verse text using the KJV parser
     parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
-    verse_text: str = parser.get_verse_text(verse_id)
+    verse_text: str = parser.verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert (
@@ -147,13 +153,13 @@ def test_mark_9_38_kjv() -> None:
 
 
 def test_mark_9_43_kjv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/16!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/16."""
     # Given the verse id for Mark 9:43
     verse_id: int = 41009043
 
     # When we get the verse text using the KJV parser
     parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
-    verse_text: str = parser.get_verse_text(verse_id)
+    verse_text: str = parser.verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert (
@@ -164,26 +170,26 @@ def test_mark_9_43_kjv() -> None:
 
 
 def test_matthew_17_21_asv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/19!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/19."""
     # Given the verse id for Matthew 17:21
     verse_id: int = 40017021
 
     # When we get the verse text using the ASV parser
     parser: BibleParser = OldOSISParser(version=bible.Version.AMERICAN_STANDARD)
-    verse_text: str = parser.get_verse_text(verse_id)
+    verse_text: str = parser.verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert verse_text == "21. But this kind goeth not out save by prayer and fasting."
 
 
 def test_1_chronicles_16_8_kjv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/50!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/50."""
     # Given the verse id for 1 Chronicles 16:8
     verse_id: int = 13016008
 
     # When we get the verse text using the KJV parser
     parser: BibleParser = OldOSISParser(version=bible.Version.KING_JAMES)
-    verse_text: str = parser.get_verse_text(verse_id)
+    verse_text: str = parser.verse_text(verse_id)
 
     # Then there are no errors and the verse text is as expected
     assert (
@@ -200,11 +206,13 @@ def test_scripture_text_caching() -> None:
     # When getting the scripture text multiple times
     first_start_time: float = time.time()
     first_text: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = DEFAULT_PARSER.get_scripture_passage_text(verse_ids)
     second_start_time: float = time.time()
     second_text: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = DEFAULT_PARSER.get_scripture_passage_text(verse_ids)
     end_time: float = time.time()
 
@@ -228,15 +236,18 @@ def test_scripture_text_caching_across_versions() -> None:
 
     first_start_time: float = time.time()
     first_text: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = kjv_parser.get_scripture_passage_text(verse_ids)
     second_start_time: float = time.time()
     second_text: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = asv_parser.get_scripture_passage_text(verse_ids)
     third_start_time: float = time.time()
     third_text: dict[
-        bible.Book, dict[int, list[str]]
+        bible.Book,
+        dict[int, list[str]],
     ] = kjv_parser.get_scripture_passage_text(verse_ids)
     end_time: float = time.time()
 
@@ -259,11 +270,11 @@ def test_verse_text_caching() -> None:
     # When getting the scripture text multiple times
     first_start_time: float = time.time()
     first_verses: list[str] = [
-        DEFAULT_PARSER.get_verse_text(verse_id) for verse_id in verse_ids
+        DEFAULT_PARSER.verse_text(verse_id) for verse_id in verse_ids
     ]
     second_start_time: float = time.time()
     second_verses: list[str] = [
-        DEFAULT_PARSER.get_verse_text(verse_id) for verse_id in verse_ids
+        DEFAULT_PARSER.verse_text(verse_id) for verse_id in verse_ids
     ]
     end_time: float = time.time()
 

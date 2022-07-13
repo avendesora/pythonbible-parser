@@ -1,5 +1,1 @@
-bandit
-black
-mypy
-pip-chill
-prospector
+pre-commit

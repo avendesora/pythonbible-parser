@@ -1,3 +1,5 @@
+"""Contains the class that converts XML scripture files into JSON files."""
+
 from __future__ import annotations
 
 import json
@@ -6,11 +8,12 @@ from contextlib import suppress
 from logging import warning
 from typing import Any
 
-import pythonbible as bible
+from pythonbible import Book, Version, get_book_chapter_verse, get_book_number
+from pythonbible.verses import VERSE_IDS
 
-from .bible_parser import BibleParser
-from .errors import InvalidBibleParserError
-from .osis.old_osis_parser import OldOSISParser
+from pythonbible_parser.bible_parser import BibleParser
+from pythonbible_parser.errors import InvalidBibleParserError
+from pythonbible_parser.osis.old_osis_parser import OldOSISParser
 
 CURRENT_FOLDER: str = os.path.dirname(os.path.realpath(__file__))
 DATA_FOLDER: str = os.path.join(CURRENT_FOLDER, "data")
@@ -20,7 +23,9 @@ class JSONConverter:
     """Convert XML scripture files into faster verse and book title JSON files."""
 
     def __init__(
-        self: JSONConverter, parser: BibleParser, **kwargs: Any | None
+        self: JSONConverter,
+        parser: BibleParser,
+        **kwargs: Any | None,
     ) -> None:
         """
         Initialize with a BibleParser and optional data folder and list of verse ids.
@@ -34,7 +39,7 @@ class JSONConverter:
         """
         self.parser: BibleParser = parser
         self.data_folder: str = kwargs.get("data_folder", DATA_FOLDER)
-        self.verse_ids: list[int] = kwargs.get("verse_ids", bible.verses.VERSE_IDS)
+        self.verse_ids: list[int] = kwargs.get("verse_ids", VERSE_IDS)
         self.books: dict[int, tuple[str, str]] = {}
         self.verses: dict[int, str] = {}
 
@@ -46,7 +51,7 @@ class JSONConverter:
         """
         self._validate_parser()
         self._get_books()
-        self._print_books_file()
+        _print_file(self.data_folder, self.parser.version, "books.json", self.books)
 
     def generate_verse_file(self: JSONConverter) -> None:
         """
@@ -56,7 +61,7 @@ class JSONConverter:
         """
         self._validate_parser()
         self._get_verses()
-        self._print_verses_file()
+        _print_file(self.data_folder, self.parser.version, "verses.json", self.verses)
 
     def _validate_parser(self: JSONConverter) -> None:
         if self.parser is None:
@@ -72,13 +77,13 @@ class JSONConverter:
 
     def _get_books(self: JSONConverter) -> None:
         for verse_id in self.verse_ids:
-            book_id: int = bible.get_book_number(verse_id)
+            book_id: int = get_book_number(verse_id)
 
             if book_id in self.books:
                 continue
 
-            book: bible.Book
-            book, _, _ = bible.get_book_chapter_verse(verse_id)
+            book: Book
+            book, _, _ = get_book_chapter_verse(verse_id)
 
             if book:
                 long_book_title: str = self.parser.get_book_title(book)
@@ -87,8 +92,9 @@ class JSONConverter:
 
     def _get_verses(self: JSONConverter) -> None:
         for verse_id in self.verse_ids:
-            verse_text: str = self.parser.get_verse_text(
-                verse_id, include_verse_number=False
+            verse_text: str = self.parser.verse_text(
+                verse_id,
+                include_verse_number=False,
             )
 
             if verse_text is None or not verse_text.strip():
@@ -96,23 +102,24 @@ class JSONConverter:
 
             self.verses[verse_id] = verse_text
 
-    def _print_books_file(self: JSONConverter) -> None:
-        _print_file(self.data_folder, self.parser.version, "books.json", self.books)
-
-    def _print_verses_file(self: JSONConverter) -> None:
-        _print_file(self.data_folder, self.parser.version, "verses.json", self.verses)
-
 
 def _print_file(
-    data_folder: str, version: bible.Version, filename: str, data: dict
+    data_folder: str,
+    version: Version,
+    filename: str,
+    data_dictionary: dict,
 ) -> None:
     version_folder: str = os.path.join(data_folder, version.value.lower())
 
     _make_sure_directory_exists(data_folder)
     _make_sure_directory_exists(version_folder)
 
-    with open(os.path.join(version_folder, filename), "w") as json_file:
-        json.dump(data, json_file)
+    with open(
+        os.path.join(version_folder, filename),
+        "w",
+        encoding="utf-8",
+    ) as json_file:
+        json.dump(data_dictionary, json_file)
 
 
 def _make_sure_directory_exists(directory: str) -> None:

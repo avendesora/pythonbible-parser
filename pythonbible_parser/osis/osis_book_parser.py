@@ -1,10 +1,11 @@
+"""Contains the OSISBookParser class."""
 from __future__ import annotations
 
 from typing import Any
 
 from pythonbible import get_verse_id
 
-from pythonbible_parser.osis.util import (
+from pythonbible_parser.osis.osis_utilities import (
     get_element_tail,
     get_element_text,
     get_element_text_and_tail,
@@ -12,8 +13,16 @@ from pythonbible_parser.osis.util import (
     strip_namespace_from_tag,
 )
 
+HTML_P_OPEN = "<p>"
+HTML_P_CLOSE = "</p>"
+HTML_NEWLINE = "<br/>"
+
+PLAIN_NEWLINE = "\n"
+
 
 class OSISBookParser:
+    """OSISBookParser parses an OSIS XML file for a specific book of the Bible."""
+
     def __init__(
         self: OSISBookParser,
         root: Any,
@@ -61,95 +70,76 @@ class OSISBookParser:
         self.unknown_tags: set[str] = set()
 
     def parse(self: OSISBookParser) -> None:
-        self._process_element(self.root, False)
+        self._process_element(self.root)
         self._set_verse_end_indeces()
 
-    def _process_element(self: OSISBookParser, element: Any, in_notes: bool) -> None:
+    def _process_element(
+        self: OSISBookParser,
+        element: Any,
+        in_notes: bool = False,
+    ) -> None:
         tag: str = strip_namespace_from_tag(element.tag)
 
-        if tag in {"div", "lg", "l", "list", "item", "divineName", "note"}:
-            # TODO - figure out poetical material formatting
-            # TODO - figure out list formatting
-            # TODO - figure out item formatting
-            self._process_children(element, in_notes or tag == "note")
-            return
+        self._handle_paragraph(element, tag)
+        self._handle_chapter(tag)
+        self._handle_title(element, tag)
+        self._handle_verse(element, tag, in_notes)
+        self._handle_q(element, tag, in_notes)
+        self._handle_seg(element, tag, in_notes)
+        self._handle_other_tags(element, tag, in_notes)
 
-        if tag == "p":
-            self._handle_paragraph(element)
-            return
-
-        if tag == "chapter":
-            self._handle_chapter()
-            return
-
-        if tag == "title":
-            self._handle_title(element)
-            return
-
-        if tag == "verse":
-            self._append_text(get_element_text(element), in_notes)
-            self._handle_verse(element)
-            self._append_text(get_element_tail(element), in_notes)
-            return
-
-        if tag in {"w", "transChange"}:
-            self._append_text(get_element_text_and_tail(element), in_notes)
-            return
-
-        if tag == "q":
-            self._append_text(get_element_text(element), in_notes)
-            self._process_children(element, in_notes)
-            self._append_text(get_element_tail(element), in_notes)
-            return
-
-        if tag == "lb":
-            # TODO - insert line break
-            self._append_text(get_element_text_and_tail(element), in_notes)
-            return
-
-        if tag == "seg":
-            # TODO ?
-            self._process_children(element, in_notes)
-            self._append_text(get_element_tail(element), in_notes)
-            return
-
-        if tag == "rdg" and in_notes:
-            self._append_text(get_element_text(element), in_notes)
-            return
-
-        else:
-            self.unknown_tags.add(tag)
-
-    def _process_children(self: OSISBookParser, element: Any, in_notes: bool) -> None:
+    def _process_children(
+        self: OSISBookParser,
+        element: Any,
+        in_notes: bool = False,
+    ) -> None:
         for child in element:
             self._process_element(child, in_notes)
 
-    def _handle_paragraph(self: OSISBookParser, element: Any) -> None:
-        self.html += "<p>"
-        self.html_readers += "<p>"
-        self.html_notes += "<p>"
-        self.plain_text += "\n"
-        self.plain_text_readers += "\n"
-        self.plain_text_notes += "\n"
+    def _handle_paragraph(self: OSISBookParser, element: Any, tag: str) -> None:
+        if tag != "p":
+            return
 
-        self._process_children(element, False)
+        self.html += HTML_P_OPEN
+        self.html_readers += HTML_P_OPEN
+        self.html_notes += HTML_P_OPEN
+        self.plain_text += PLAIN_NEWLINE
+        self.plain_text_readers += PLAIN_NEWLINE
+        self.plain_text_notes += PLAIN_NEWLINE
 
-        self.html += "</p>"
-        self.html_readers += "</p>"
-        self.html_notes += "</p>"
+        self._process_children(element)
 
-    def _handle_chapter(self: OSISBookParser) -> None:
+        self.html += HTML_P_CLOSE
+        self.html_readers += HTML_P_CLOSE
+        self.html_notes += HTML_P_CLOSE
+
+    def _handle_chapter(self: OSISBookParser, tag: str) -> None:
+        if tag != "chapter":
+            return
+
         self._set_verse_end_indeces()
         self.current_verse = 0
 
-    def _handle_title(self: OSISBookParser, element: Any) -> None:
+    def _handle_title(self: OSISBookParser, element: Any, tag: str) -> None:
+        if tag != "title":
+            return
+
         if self.title and self.short_title:
             return
 
         self.title = element.text or ""
         self.short_title = element.get("short") or ""
 
-    def _handle_verse(self: OSISBookParser, element: Any) -> None:
+    def _handle_verse(
+        self: OSISBookParser,
+        element: Any,
+        tag: str,
+        in_notes: bool,
+    ) -> None:
+        if tag != "verse":
+            return
+
+        self._append_text(get_element_text(element), in_notes)
         osis_id_str = element.get("osisID")
 
         if osis_id_str is None:
@@ -165,8 +155,8 @@ class OSISBookParser:
 
         if (
             self.html
-            and not self.html.endswith("</p>")
-            and not self.html.endswith("<p>")
+            and not self.html.endswith(HTML_P_CLOSE)
+            and not self.html.endswith(HTML_P_OPEN)
         ):
             self.html += " "
 
@@ -174,62 +164,113 @@ class OSISBookParser:
 
         if (
             self.html_notes
-            and not self.html_notes.endswith("</p>")
-            and not self.html_notes.endswith("<p>")
+            and not self.html_notes.endswith(HTML_P_CLOSE)
+            and not self.html_notes.endswith(HTML_P_OPEN)
         ):
             self.html_notes += " "
 
         self.html_notes += f"<sup>{osis_id.verse}</sup>"
 
-        if self.plain_text and not self.plain_text.endswith("\n"):
+        if self.plain_text and not self.plain_text.endswith(PLAIN_NEWLINE):
             self.plain_text += " "
 
         self.plain_text += f"{osis_id.verse}."
 
-        if self.plain_text_notes and not self.plain_text_notes.endswith("\n"):
+        if self.plain_text_notes and not self.plain_text_notes.endswith(PLAIN_NEWLINE):
             self.plain_text_notes += " "
 
         self.plain_text_notes += f"{osis_id.verse}."
+        self._append_text(get_element_tail(element), in_notes)
+
+    def _handle_q(self: OSISBookParser, element: Any, tag: str, in_notes: bool) -> None:
+        if tag != "q":
+            return
+
+        self._append_text(get_element_text(element), in_notes)
+        self._process_children(element, in_notes)
+        self._append_text(get_element_tail(element), in_notes)
+
+    def _handle_seg(
+        self: OSISBookParser,
+        element: Any,
+        tag: str,
+        in_notes: bool,
+    ) -> None:
+        if tag != "seg":
+            return
+
+        self._process_children(element, in_notes)
+        self._append_text(get_element_tail(element), in_notes)
+
+    def _handle_other_tags(
+        self: OSISBookParser,
+        element: Any,
+        tag: str,
+        in_notes: bool,
+    ) -> None:
+        if tag in {"div", "lg", "l", "list", "item", "divineName", "note"}:
+            # TODO - figure out poetical material formatting
+            # TODO - figure out list formatting
+            # TODO - figure out item formatting
+            self._process_children(element, in_notes or tag == "note")
+            return
+
+        if tag in {"w", "transChange"}:
+            self._append_text(get_element_text_and_tail(element), in_notes)
+            return
+
+        if tag == "lb":
+            # TODO - insert line break
+            self._append_text(get_element_text_and_tail(element), in_notes)
+            return
+
+        if tag == "rdg" and in_notes:
+            self._append_text(get_element_text(element), in_notes)
+            return
+
+        self.unknown_tags.add(tag)
 
     def _append_text(self: OSISBookParser, text: str, in_notes: bool = False) -> None:
         text = text.strip() if text else ""
         text = text.replace("¶", "")
 
-        if len(text) == 0:
+        if not text:
             return
 
         if text[0].isalpha():
             if not in_notes:
                 if (
                     self.html
-                    and not self.html.endswith("<br/>")
-                    and not self.html.endswith("</p>")
+                    and not self.html.endswith(HTML_NEWLINE)
+                    and not self.html.endswith(HTML_P_CLOSE)
                 ):
                     self.html += " "
 
                 if (
                     self.html_readers
-                    and not self.html_readers.endswith("<br/>")
-                    and not self.html_readers.endswith("</p>")
+                    and not self.html_readers.endswith(HTML_NEWLINE)
+                    and not self.html_readers.endswith(HTML_P_CLOSE)
                 ):
                     self.html_readers += " "
 
-                if self.plain_text and not self.plain_text.endswith("\n"):
+                if self.plain_text and not self.plain_text.endswith(PLAIN_NEWLINE):
                     self.plain_text += " "
 
                 if self.plain_text_readers and not self.plain_text_readers.endswith(
-                    "\n"
+                    PLAIN_NEWLINE,
                 ):
                     self.plain_text_readers += " "
 
             if (
                 self.html_notes
-                and not self.html_notes.endswith("<br/>")
-                and not self.html_notes.endswith("</p>")
+                and not self.html_notes.endswith(HTML_NEWLINE)
+                and not self.html_notes.endswith(HTML_P_CLOSE)
             ):
                 self.html_notes += " "
 
-            if self.plain_text_notes and not self.plain_text_notes.endswith("\n"):
+            if self.plain_text_notes and not self.plain_text_notes.endswith(
+                PLAIN_NEWLINE,
+            ):
                 self.plain_text_notes += " "
 
         if not in_notes:
