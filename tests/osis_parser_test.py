@@ -280,3 +280,8 @@ def test_1_chronicles_16_8_kjv() -> None:
         "make known his deeds among the people.</p>"
     )
     assert verse_text_html_notes == verse_text_html
+
+
+def test_write() -> None:
+    # actually test this once the functionality is more complete
+    get_parser(bible.Version.KING_JAMES).write()

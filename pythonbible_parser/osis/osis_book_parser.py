@@ -190,10 +190,7 @@ class OSISBookParser:
         self.plain_text_notes += f"{osis_id.verse}."
 
     def _append_text(self, text, in_notes: bool = False) -> None:
-        if text is None:
-            return
-
-        text = text.strip()
+        text = text.strip() if text else ""
         text = text.replace("¶", "")
 
         if len(text) == 0:
