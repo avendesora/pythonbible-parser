@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from logging import info
+
 import pythonbible as bible
 
 from pythonbible_parser.formatter import format_scripture_text_with_parser
@@ -12,25 +14,25 @@ def profile_books() -> None:
 
 
 def profile_book(book: bible.Book) -> None:
-    print(book)
+    info(book)
 
-    print("--> get references")
+    info("--> get references")
     references = bible.get_references(book.title)
 
-    print("--> convert to verse ids")
+    info("--> convert to verse ids")
     verse_ids = bible.convert_references_to_verse_ids(references)
 
-    print("--> convert back to references")
-    references_2 = bible.convert_verse_ids_to_references(verse_ids)
+    info("--> convert back to references")
+    bible.convert_verse_ids_to_references(verse_ids)
 
-    print("--> format reference strings")
-    reference_strings = bible.format_scripture_references(references)
+    info("--> format reference strings")
+    bible.format_scripture_references(references)
 
-    print("--> format verse text")
+    info("--> format verse text")
     profile_format_scripture_text(book)
 
-    print("--> get unformatted verse text")
-    verses_unformatted = bible.format_scripture_text(
+    info("--> get unformatted verse text")
+    bible.format_scripture_text(
         verse_ids, one_verse_per_paragraph=True
     )
 
@@ -38,7 +40,7 @@ def profile_book(book: bible.Book) -> None:
 def profile_format_scripture_text(book: bible.Book) -> None:
     for chapter in range(1, bible.get_number_of_chapters(book) + 1):
         reference_string = f"{book.title} {chapter}"
-        print(f"--> --> {reference_string}")
+        info(f"--> --> {reference_string}")
         references = bible.get_references(reference_string)
         verse_ids = bible.convert_references_to_verse_ids(references)
         format_scripture_text_with_parser(

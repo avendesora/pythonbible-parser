@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from logging import info
+
 number_of_characters: int = 0
 tags: set[str] = set()
 current_tag: str = ""
@@ -31,8 +33,8 @@ with open("versions/asv.xml", "r") as reader:
 
         number_of_characters += 1
 
-    print(f"Total number of characters = {number_of_characters}.")
+    info(f"Total number of characters = {number_of_characters}.")
 
     sorted_tags = sorted(tags)
     for tag in sorted_tags:
-        print(tag)
+        info(tag)

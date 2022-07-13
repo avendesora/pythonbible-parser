@@ -211,7 +211,8 @@ def test_scripture_text_caching() -> None:
     first_time: float = second_start_time - first_start_time
     second_time: float = end_time - second_start_time
 
-    # Then the results are cached, so we get the same results much faster the second time
+    # Then the results are cached, so we get the same results much faster the second
+    # time
     assert first_time * 0.1 > second_time
     assert first_text == second_text
 
@@ -269,6 +270,7 @@ def test_verse_text_caching() -> None:
     first_time: float = second_start_time - first_start_time
     second_time: float = end_time - second_start_time
 
-    # Then the results are cached, so we get the same results much faster the second time
+    # Then the results are cached, so we get the same results much faster the second
+    # time
     assert first_time * 0.1 > second_time
     assert first_verses == second_verses

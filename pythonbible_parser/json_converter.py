@@ -9,6 +9,8 @@ from .bible_parser import BibleParser
 from .errors import InvalidBibleParserError
 from .osis.old_osis_parser import OldOSISParser
 
+from logging import warning
+
 CURRENT_FOLDER: str = os.path.dirname(os.path.realpath(__file__))
 DATA_FOLDER: str = os.path.join(CURRENT_FOLDER, "data")
 
@@ -87,7 +89,7 @@ class JSONConverter:
             )
 
             if verse_text is None or not verse_text.strip():
-                print(f"Verse {verse_id} is empty.")
+                warning(f"Verse {verse_id} is empty.")
 
             self.verses[verse_id] = verse_text
 
