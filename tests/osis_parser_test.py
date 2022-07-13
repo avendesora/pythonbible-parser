@@ -56,7 +56,7 @@ def get_html_bible(version: bible.Version) -> Bible:
         parser.html,
         parser.html_verse_start_indeces,
         parser.html_verse_end_indeces,
-        True,
+        is_html=True,
     )
 
 
@@ -68,7 +68,7 @@ def get_html_readers_bible(version: bible.Version) -> Bible:
         parser.html_readers,
         parser.html_readers_verse_start_indeces,
         parser.html_readers_verse_end_indeces,
-        True,
+        is_html=True,
     )
 
 
@@ -80,12 +80,12 @@ def get_html_notes_bible(version: bible.Version) -> Bible:
         parser.html_notes,
         parser.html_notes_verse_start_indeces,
         parser.html_notes_verse_end_indeces,
-        True,
+        is_html=True,
     )
 
 
 def test_exodus_20_3_asv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/9!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/9."""
     # Given the verse id for Exodus 20:3
     verse_id: int = 2020003
 
@@ -117,7 +117,7 @@ def test_exodus_20_3_asv() -> None:
 
 
 def test_mark_9_38_kjv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/12!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/12."""
     # Given the verse id for Mark 9:38
     verse_id: int = 41009038
 
@@ -162,7 +162,7 @@ def test_mark_9_38_kjv() -> None:
 
 
 def test_mark_9_43_kjv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/16!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/16."""
     # Given the verse id for Mark 9:43
     verse_id: int = 41009043
 
@@ -207,7 +207,7 @@ def test_mark_9_43_kjv() -> None:
 
 
 def test_matthew_17_21_asv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/19!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/19."""
     # Given the verse id for Matthew 17:21
     verse_id: int = 40017021
 
@@ -242,7 +242,7 @@ def test_matthew_17_21_asv() -> None:
 
 
 def test_1_chronicles_16_8_kjv() -> None:
-    """Test for https://github.com/avendesora/pythonbible/issues/50!"""
+    """Test for https://github.com/avendesora/pythonbible/issues/50."""
     # Given the verse id for 1 Chronicles 16:8
     verse_id: int = 13016008
 

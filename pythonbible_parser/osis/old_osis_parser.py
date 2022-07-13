@@ -15,9 +15,9 @@ from pythonbible import (
     get_verse_id,
 )
 
-from ..bible_parser import BibleParser, sort_paragraphs
-from .constants import BOOK_IDS
-from .util import (
+from pythonbible_parser.bible_parser import BibleParser, sort_paragraphs
+from pythonbible_parser.osis.constants import BOOK_IDS
+from pythonbible_parser.osis.osis_utilities import (
     OSISID,
     get_element_tail,
     get_element_text,
@@ -55,10 +55,10 @@ class OldOSISParser(BibleParser):
         super().__init__(version)
 
         self.tree: ElementTree = ElementTree.parse(
-            os.path.join(XML_FOLDER, f"{self.version.value.lower()}.xml")
+            os.path.join(XML_FOLDER, f"{self.version.value.lower()}.xml"),
         )
         self.namespaces: dict[str, str] = {
-            "xmlns": get_namespace(self.tree.getroot().tag)
+            "xmlns": get_namespace(self.tree.getroot().tag),
         }
 
     @lru_cache()
@@ -83,13 +83,10 @@ class OldOSISParser(BibleParser):
         book_title_element = self._get_book_title_element(book)
         return book_title_element.get("short") or ""
 
-    @lru_cache()
-    def _get_book_title_element(self: OldOSISParser, book: Book) -> Any:
-        xpath: str = XPATH_BOOK_TITLE.format(BOOK_IDS.get(book))
-        return self.tree.find(xpath, namespaces=self.namespaces)
-
     def get_scripture_passage_text(
-        self: OldOSISParser, verse_ids: list[int], **kwargs: Any | None
+        self: OldOSISParser,
+        verse_ids: list[int],
+        **kwargs: Any | None,
     ) -> dict[Book, dict[int, list[str]]]:
         """
         Get the scripture passage for the given verse ids.
@@ -116,25 +113,11 @@ class OldOSISParser(BibleParser):
         include_verse_number: bool = kwargs.get("include_verse_number", True)
 
         return self._get_scripture_passage_text_memoized(
-            verse_ids_tuple, include_verse_number
-        )
-
-    @lru_cache()
-    def _get_scripture_passage_text_memoized(
-        self: OldOSISParser,
-        verse_ids: tuple[int],
-        include_verse_number: bool,
-    ) -> dict[Book, dict[int, list[str]]]:
-        paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
-            self.tree,
-            self.namespaces,
-            verse_ids,
+            verse_ids_tuple,
             include_verse_number,
         )
 
-        return sort_paragraphs(paragraphs)
-
-    def get_verse_text(
+    def verse_text(
         self: OldOSISParser,
         verse_id: int,
         **kwargs: Any | None,
@@ -160,11 +143,37 @@ class OldOSISParser(BibleParser):
         return self._get_verse_text_memoized(verse_id, include_verse_number)
 
     @lru_cache()
-    def _get_verse_text_memoized(
-        self: OldOSISParser, verse_id: int, include_verse_number: bool
-    ) -> str:
+    def _get_book_title_element(self: OldOSISParser, book: Book) -> Any:
+        xpath: str = XPATH_BOOK_TITLE.format(BOOK_IDS.get(book))
+        return self.tree.find(xpath, namespaces=self.namespaces)
+
+    @lru_cache()
+    def _get_scripture_passage_text_memoized(
+        self: OldOSISParser,
+        verse_ids: tuple[int],
+        include_verse_number: bool,
+    ) -> dict[Book, dict[int, list[str]]]:
         paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
-            self.tree, self.namespaces, (verse_id,), include_verse_number
+            self.tree,
+            self.namespaces,
+            verse_ids,
+            include_verse_number,
+        )
+
+        return sort_paragraphs(paragraphs)
+
+    @lru_cache()
+    def _get_verse_text_memoized(
+        self: OldOSISParser,
+        verse_id: int,
+        include_verse_number: bool,
+    ) -> str:
+        verse_ids = (verse_id,)
+        paragraphs: dict[Book, dict[int, list[str]]] = _get_paragraphs(
+            self.tree,
+            self.namespaces,
+            verse_ids,
+            include_verse_number,
         )
 
         verse_text: str = ""
@@ -189,7 +198,8 @@ def _get_paragraphs(
     verse: int
     book, chapter, verse = get_book_chapter_verse(current_verse_id)
     paragraph_element = tree.find(
-        XPATH_VERSE_PARENT.format(BOOK_IDS.get(book), chapter, verse), namespaces
+        XPATH_VERSE_PARENT.format(BOOK_IDS.get(book), chapter, verse),
+        namespaces,
     )
     paragraphs: list[str]
     paragraphs, current_verse_id = _get_paragraph_from_element(
@@ -244,10 +254,10 @@ def _get_paragraph_from_element(
             include_verse_number,
         )
 
-        if len(child_paragraph) == 0:
+        if not child_paragraph:
             continue
 
-        if len(paragraph) > 0 and not paragraph.endswith(" "):
+        if paragraph and not paragraph.endswith(" "):
             paragraph += " "
 
         paragraph += child_paragraph
