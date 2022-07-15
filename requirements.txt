@@ -1,2 +1,2 @@
 defusedxml==0.7.1
-pythonbible==0.7.2
+pythonbible==0.7.4
