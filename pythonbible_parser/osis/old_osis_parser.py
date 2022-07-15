@@ -107,7 +107,7 @@ class OldOSISParser(BibleParser):
 
         # Sort the verse ids and the convert it into a tuple so it's hashable
         verse_ids.sort()
-        verse_ids_tuple: tuple[int] = tuple(verse_ids)
+        verse_ids_tuple: tuple[int, ...] = tuple(verse_ids)
 
         # keyword arguments
         include_verse_number: bool = kwargs.get("include_verse_number", True)
