@@ -15,7 +15,7 @@ format for easy and efficient use in Python.
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/avendesora/pythonbible-parser/main.svg)](https://results.pre-commit.ci/latest/github/avendesora/pythonbible-parser/main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-[![Python 3.10](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20dev-blue?logo=python&logoColor=lightgray)](https://www.python.org/downloads/)
+[![Python 3.11](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20dev-blue?logo=python&logoColor=lightgray)](https://www.python.org/downloads/)
 
 > **WARNING**: This is very much still a work in progress and does not yet have a
 > stable release. Breaking changes are expected.
