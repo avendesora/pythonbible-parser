@@ -8,7 +8,10 @@ from contextlib import suppress
 from logging import warning
 from typing import Any
 
-from pythonbible import Book, Version, get_book_chapter_verse, get_book_number
+from pythonbible import Book
+from pythonbible import Version
+from pythonbible import get_book_chapter_verse
+from pythonbible import get_book_number
 from pythonbible.verses import VERSE_IDS
 
 from pythonbible_parser.bible_parser import BibleParser

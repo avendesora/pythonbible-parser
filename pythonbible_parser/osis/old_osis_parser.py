@@ -7,25 +7,22 @@ from functools import lru_cache
 from typing import Any
 
 from defusedxml import ElementTree
-from pythonbible import (
-    Book,
-    InvalidVerseError,
-    Version,
-    get_book_chapter_verse,
-    get_verse_id,
-)
+from pythonbible import Book
+from pythonbible import InvalidVerseError
+from pythonbible import Version
+from pythonbible import get_book_chapter_verse
+from pythonbible import get_verse_id
 
-from pythonbible_parser.bible_parser import BibleParser, sort_paragraphs
+from pythonbible_parser.bible_parser import BibleParser
+from pythonbible_parser.bible_parser import sort_paragraphs
 from pythonbible_parser.osis.constants import BOOK_IDS
-from pythonbible_parser.osis.osis_utilities import (
-    OSISID,
-    get_element_tail,
-    get_element_text,
-    get_element_text_and_tail,
-    get_namespace,
-    parse_osis_id,
-    strip_namespace_from_tag,
-)
+from pythonbible_parser.osis.osis_utilities import OSISID
+from pythonbible_parser.osis.osis_utilities import get_element_tail
+from pythonbible_parser.osis.osis_utilities import get_element_text
+from pythonbible_parser.osis.osis_utilities import get_element_text_and_tail
+from pythonbible_parser.osis.osis_utilities import get_namespace
+from pythonbible_parser.osis.osis_utilities import parse_osis_id
+from pythonbible_parser.osis.osis_utilities import strip_namespace_from_tag
 
 XML_FOLDER: str = os.path.join(os.path.dirname(os.path.realpath(__file__)), "versions")
 

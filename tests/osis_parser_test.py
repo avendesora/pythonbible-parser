@@ -4,7 +4,6 @@ from functools import lru_cache
 
 import pythonbible as bible
 
-from pythonbible_parser.bible import Bible
 from pythonbible_parser.osis.osis_parser import OSISParser
 
 
@@ -16,70 +15,70 @@ def get_parser(version: bible.Version) -> OSISParser:
 
 
 @lru_cache()
-def get_plain_text_bible(version: bible.Version) -> Bible:
+def get_plain_text_bible(version: bible.Version) -> bible.Bible:
     parser = get_parser(version)
-    return Bible(
+    return bible.Bible(
         parser.version,
         parser.plain_text,
-        parser.plain_text_verse_start_indeces,
-        parser.plain_text_verse_end_indeces,
+        parser.plain_text_verse_start_indices,
+        parser.plain_text_verse_end_indices,
     )
 
 
 @lru_cache()
-def get_plain_text_readers_bible(version: bible.Version) -> Bible:
+def get_plain_text_readers_bible(version: bible.Version) -> bible.Bible:
     parser = get_parser(version)
-    return Bible(
+    return bible.Bible(
         parser.version,
         parser.plain_text_readers,
-        parser.plain_text_readers_verse_start_indeces,
-        parser.plain_text_readers_verse_end_indeces,
+        parser.plain_text_readers_verse_start_indices,
+        parser.plain_text_readers_verse_end_indices,
     )
 
 
 @lru_cache()
-def get_plain_text_notes_bible(version: bible.Version) -> Bible:
+def get_plain_text_notes_bible(version: bible.Version) -> bible.Bible:
     parser = get_parser(version)
-    return Bible(
+    return bible.Bible(
         parser.version,
         parser.plain_text_notes,
-        parser.plain_text_notes_verse_start_indeces,
-        parser.plain_text_notes_verse_end_indeces,
+        parser.plain_text_notes_verse_start_indices,
+        parser.plain_text_notes_verse_end_indices,
     )
 
 
 @lru_cache()
-def get_html_bible(version: bible.Version) -> Bible:
+def get_html_bible(version: bible.Version) -> bible.Bible:
     parser = get_parser(version)
-    return Bible(
+    return bible.Bible(
         parser.version,
         parser.html,
-        parser.html_verse_start_indeces,
-        parser.html_verse_end_indeces,
+        parser.html_verse_start_indices,
+        parser.html_verse_end_indices,
         is_html=True,
     )
 
 
 @lru_cache()
-def get_html_readers_bible(version: bible.Version) -> Bible:
+def get_html_readers_bible(version: bible.Version) -> bible.Bible:
     parser = get_parser(version)
-    return Bible(
+    return bible.Bible(
         parser.version,
         parser.html_readers,
-        parser.html_readers_verse_start_indeces,
-        parser.html_readers_verse_end_indeces,
+        parser.html_readers_verse_start_indices,
+        parser.html_readers_verse_end_indices,
         is_html=True,
     )
 
 
 @lru_cache()
-def get_html_notes_bible(version: bible.Version) -> Bible:
+def get_html_notes_bible(version: bible.Version) -> bible.Bible:
     parser = get_parser(version)
-    return Bible(
+    return bible.Bible(
         parser.version,
         parser.html_notes,
-        parser.html_notes_verse_start_indeces,
-        parser.html_notes_verse_end_indeces,
+        parser.html_notes_verse_start_indices,
+        parser.html_notes_verse_end_indices,
         is_html=True,
     )
 
@@ -91,12 +90,12 @@ def test_exodus_20_3_asv() -> None:
 
     # When we get the verse text using the ASV parser
     version: bible.Version = bible.Version.AMERICAN_STANDARD
-    plain_bible: Bible = get_plain_text_bible(version)
-    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
-    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
-    html_bible: Bible = get_html_bible(version)
-    html_readers_bible: Bible = get_html_readers_bible(version)
-    html_notes_bible: Bible = get_html_notes_bible(version)
+    plain_bible: bible.Bible = get_plain_text_bible(version)
+    plain_readers_bible: bible.Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: bible.Bible = get_plain_text_notes_bible(version)
+    html_bible: bible.Bible = get_html_bible(version)
+    html_readers_bible: bible.Bible = get_html_readers_bible(version)
+    html_notes_bible: bible.Bible = get_html_notes_bible(version)
     verse_text: str = plain_bible.get_scripture(verse_id)
     verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
     verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
@@ -123,12 +122,12 @@ def test_mark_9_38_kjv() -> None:
 
     # When we get the verse text using the KJV parser
     version: bible.Version = bible.Version.KING_JAMES
-    plain_bible: Bible = get_plain_text_bible(version)
-    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
-    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
-    html_bible: Bible = get_html_bible(version)
-    html_readers_bible: Bible = get_html_readers_bible(version)
-    html_notes_bible: Bible = get_html_notes_bible(version)
+    plain_bible: bible.Bible = get_plain_text_bible(version)
+    plain_readers_bible: bible.Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: bible.Bible = get_plain_text_notes_bible(version)
+    html_bible: bible.Bible = get_html_bible(version)
+    html_readers_bible: bible.Bible = get_html_readers_bible(version)
+    html_notes_bible: bible.Bible = get_html_notes_bible(version)
     verse_text: str = plain_bible.get_scripture(verse_id)
     verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
     verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
@@ -168,12 +167,12 @@ def test_mark_9_43_kjv() -> None:
 
     # When we get the verse text using the KJV parser
     version: bible.Version = bible.Version.KING_JAMES
-    plain_bible: Bible = get_plain_text_bible(version)
-    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
-    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
-    html_bible: Bible = get_html_bible(version)
-    html_readers_bible: Bible = get_html_readers_bible(version)
-    html_notes_bible: Bible = get_html_notes_bible(version)
+    plain_bible: bible.Bible = get_plain_text_bible(version)
+    plain_readers_bible: bible.Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: bible.Bible = get_plain_text_notes_bible(version)
+    html_bible: bible.Bible = get_html_bible(version)
+    html_readers_bible: bible.Bible = get_html_readers_bible(version)
+    html_notes_bible: bible.Bible = get_html_notes_bible(version)
     verse_text: str = plain_bible.get_scripture(verse_id)
     verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
     verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
@@ -213,12 +212,12 @@ def test_matthew_17_21_asv() -> None:
 
     # When we get the verse text using the ASV parser
     version: bible.Version = bible.Version.AMERICAN_STANDARD
-    plain_bible: Bible = get_plain_text_bible(version)
-    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
-    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
-    html_bible: Bible = get_html_bible(version)
-    html_readers_bible: Bible = get_html_readers_bible(version)
-    html_notes_bible: Bible = get_html_notes_bible(version)
+    plain_bible: bible.Bible = get_plain_text_bible(version)
+    plain_readers_bible: bible.Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: bible.Bible = get_plain_text_notes_bible(version)
+    html_bible: bible.Bible = get_html_bible(version)
+    html_readers_bible: bible.Bible = get_html_readers_bible(version)
+    html_notes_bible: bible.Bible = get_html_notes_bible(version)
     verse_text: str = plain_bible.get_scripture(verse_id)
     verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
     verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
@@ -248,12 +247,12 @@ def test_1_chronicles_16_8_kjv() -> None:
 
     # When we get the verse text using the KJV parser
     version: bible.Version = bible.Version.KING_JAMES
-    plain_bible: Bible = get_plain_text_bible(version)
-    plain_readers_bible: Bible = get_plain_text_readers_bible(version)
-    plain_notes_bible: Bible = get_plain_text_notes_bible(version)
-    html_bible: Bible = get_html_bible(version)
-    html_readers_bible: Bible = get_html_readers_bible(version)
-    html_notes_bible: Bible = get_html_notes_bible(version)
+    plain_bible: bible.Bible = get_plain_text_bible(version)
+    plain_readers_bible: bible.Bible = get_plain_text_readers_bible(version)
+    plain_notes_bible: bible.Bible = get_plain_text_notes_bible(version)
+    html_bible: bible.Bible = get_html_bible(version)
+    html_readers_bible: bible.Bible = get_html_readers_bible(version)
+    html_notes_bible: bible.Bible = get_html_notes_bible(version)
     verse_text: str = plain_bible.get_scripture(verse_id)
     verse_text_readers: str = plain_readers_bible.get_scripture(verse_id)
     verse_text_notes: str = plain_notes_bible.get_scripture(verse_id)
@@ -285,3 +284,4 @@ def test_1_chronicles_16_8_kjv() -> None:
 def test_write() -> None:
     # actually test this once the functionality is more complete
     get_parser(bible.Version.KING_JAMES).write()
+    get_parser(bible.Version.AMERICAN_STANDARD).write()

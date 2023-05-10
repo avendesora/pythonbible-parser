@@ -5,7 +5,8 @@ from abc import abstractmethod
 from collections import OrderedDict
 from typing import Any
 
-from pythonbible import Book, Version
+from pythonbible import Book
+from pythonbible import Version
 
 
 class BibleParser:
