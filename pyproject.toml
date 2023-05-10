@@ -24,7 +24,7 @@ classifiers = [
 ]
 requires = [
     "defusedxml >=0.7.1",
-    "pythonbible ==0.8",
+    "pythonbible ==0.9.1",
 ]
 description-file = "README.md"
 requires-python = ">=3.7"
@@ -49,3 +49,4 @@ all = [
 [tool.isort]
 profile = "black"
 add_imports = "from __future__ import annotations"
+force_single_line = true

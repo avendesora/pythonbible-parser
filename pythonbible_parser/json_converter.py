@@ -8,7 +8,10 @@ from contextlib import suppress
 from logging import warning
 from typing import Any
 
-from pythonbible import Book, Version, get_book_chapter_verse, get_book_number
+from pythonbible import Book
+from pythonbible import Version
+from pythonbible import get_book_chapter_verse
+from pythonbible import get_book_number
 from pythonbible.verses import VERSE_IDS
 
 from pythonbible_parser.bible_parser import BibleParser
@@ -67,12 +70,7 @@ class JSONConverter:
         if self.parser is None:
             raise InvalidBibleParserError("Parser instance is None.")
 
-        instance_identified: bool = False
-
-        if isinstance(self.parser, OldOSISParser):
-            instance_identified = True
-
-        if not instance_identified:
+        if not isinstance(self.parser, OldOSISParser):
             raise InvalidBibleParserError("Parser instance is not a valid type.")
 
     def _get_books(self: JSONConverter) -> None:

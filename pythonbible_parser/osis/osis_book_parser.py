@@ -5,13 +5,11 @@ from typing import Any
 
 from pythonbible import get_verse_id
 
-from pythonbible_parser.osis.osis_utilities import (
-    get_element_tail,
-    get_element_text,
-    get_element_text_and_tail,
-    parse_osis_id,
-    strip_namespace_from_tag,
-)
+from pythonbible_parser.osis.osis_utilities import get_element_tail
+from pythonbible_parser.osis.osis_utilities import get_element_text
+from pythonbible_parser.osis.osis_utilities import get_element_text_and_tail
+from pythonbible_parser.osis.osis_utilities import parse_osis_id
+from pythonbible_parser.osis.osis_utilities import strip_namespace_from_tag
 
 HTML_P_OPEN = "<p>"
 HTML_P_CLOSE = "</p>"
@@ -51,19 +49,19 @@ class OSISBookParser:
         self.plain_text_readers: str = ""
         self.plain_text_notes: str = ""
 
-        self.html_verse_start_indeces: dict[int, int] = {}
-        self.html_readers_verse_start_indeces: dict[int, int] = {}
-        self.html_notes_verse_start_indeces: dict[int, int] = {}
-        self.plain_text_verse_start_indeces: dict[int, int] = {}
-        self.plain_text_readers_verse_start_indeces: dict[int, int] = {}
-        self.plain_text_notes_verse_start_indeces: dict[int, int] = {}
+        self.html_verse_start_indices: dict[int, int] = {}
+        self.html_readers_verse_start_indices: dict[int, int] = {}
+        self.html_notes_verse_start_indices: dict[int, int] = {}
+        self.plain_text_verse_start_indices: dict[int, int] = {}
+        self.plain_text_readers_verse_start_indices: dict[int, int] = {}
+        self.plain_text_notes_verse_start_indices: dict[int, int] = {}
 
-        self.html_verse_end_indeces: dict[int, int] = {}
-        self.html_readers_verse_end_indeces: dict[int, int] = {}
-        self.html_notes_verse_end_indeces: dict[int, int] = {}
-        self.plain_text_verse_end_indeces: dict[int, int] = {}
-        self.plain_text_readers_verse_end_indeces: dict[int, int] = {}
-        self.plain_text_notes_verse_end_indeces: dict[int, int] = {}
+        self.html_verse_end_indices: dict[int, int] = {}
+        self.html_readers_verse_end_indices: dict[int, int] = {}
+        self.html_notes_verse_end_indices: dict[int, int] = {}
+        self.plain_text_verse_end_indices: dict[int, int] = {}
+        self.plain_text_readers_verse_end_indices: dict[int, int] = {}
+        self.plain_text_notes_verse_end_indices: dict[int, int] = {}
 
         self.current_verse: int = 0
 
@@ -71,7 +69,7 @@ class OSISBookParser:
 
     def parse(self: OSISBookParser) -> None:
         self._process_element(self.root)
-        self._set_verse_end_indeces()
+        self._set_verse_end_indices()
 
     def _process_element(
         self: OSISBookParser,
@@ -117,7 +115,7 @@ class OSISBookParser:
         if tag != "chapter":
             return
 
-        self._set_verse_end_indeces()
+        self._set_verse_end_indices()
         self.current_verse = 0
 
     def _handle_title(self: OSISBookParser, element: Any, tag: str) -> None:
@@ -147,11 +145,11 @@ class OSISBookParser:
 
         osis_id = parse_osis_id(element.get("osisID"))
 
-        self._set_verse_end_indeces()
+        self._set_verse_end_indices()
 
         self.current_verse = get_verse_id(osis_id.book, osis_id.chapter, osis_id.verse)
 
-        self._set_verse_start_indeces()
+        self._set_verse_start_indices()
 
         if (
             self.html
@@ -282,43 +280,43 @@ class OSISBookParser:
         self.html_notes += text
         self.plain_text_notes += text
 
-    def _set_verse_end_indeces(self: OSISBookParser) -> None:
+    def _set_verse_end_indices(self: OSISBookParser) -> None:
         if self.current_verse > 0:
-            self.html_verse_end_indeces[self.current_verse] = (
+            self.html_verse_end_indices[self.current_verse] = (
                 len(self.html) + self.html_offset
             )
-            self.html_readers_verse_end_indeces[self.current_verse] = (
+            self.html_readers_verse_end_indices[self.current_verse] = (
                 len(self.html_readers) + self.html_readers_offset
             )
-            self.html_notes_verse_end_indeces[self.current_verse] = (
+            self.html_notes_verse_end_indices[self.current_verse] = (
                 len(self.html_notes) + self.html_notes_offset
             )
-            self.plain_text_verse_end_indeces[self.current_verse] = (
+            self.plain_text_verse_end_indices[self.current_verse] = (
                 len(self.plain_text) + self.plain_text_offset
             )
-            self.plain_text_readers_verse_end_indeces[self.current_verse] = (
+            self.plain_text_readers_verse_end_indices[self.current_verse] = (
                 len(self.plain_text_readers) + self.plain_text_readers_offset
             )
-            self.plain_text_notes_verse_end_indeces[self.current_verse] = (
+            self.plain_text_notes_verse_end_indices[self.current_verse] = (
                 len(self.plain_text_notes) + self.plain_text_notes_offset
             )
 
-    def _set_verse_start_indeces(self: OSISBookParser) -> None:
-        self.html_verse_start_indeces[self.current_verse] = (
+    def _set_verse_start_indices(self: OSISBookParser) -> None:
+        self.html_verse_start_indices[self.current_verse] = (
             len(self.html) + self.html_offset
         )
-        self.html_readers_verse_start_indeces[self.current_verse] = (
+        self.html_readers_verse_start_indices[self.current_verse] = (
             len(self.html_readers) + self.html_readers_offset
         )
-        self.html_notes_verse_start_indeces[self.current_verse] = (
+        self.html_notes_verse_start_indices[self.current_verse] = (
             len(self.html_notes) + self.html_notes_offset
         )
-        self.plain_text_verse_start_indeces[self.current_verse] = (
+        self.plain_text_verse_start_indices[self.current_verse] = (
             len(self.plain_text) + self.plain_text_offset
         )
-        self.plain_text_readers_verse_start_indeces[self.current_verse] = (
+        self.plain_text_readers_verse_start_indices[self.current_verse] = (
             len(self.plain_text_readers) + self.plain_text_readers_offset
         )
-        self.plain_text_notes_verse_start_indeces[self.current_verse] = (
+        self.plain_text_notes_verse_start_indices[self.current_verse] = (
             len(self.plain_text_notes) + self.plain_text_notes_offset
         )
