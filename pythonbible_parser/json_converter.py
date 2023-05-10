@@ -70,12 +70,7 @@ class JSONConverter:
         if self.parser is None:
             raise InvalidBibleParserError("Parser instance is None.")
 
-        instance_identified: bool = False
-
-        if isinstance(self.parser, OldOSISParser):
-            instance_identified = True
-
-        if not instance_identified:
+        if not isinstance(self.parser, OldOSISParser):
             raise InvalidBibleParserError("Parser instance is not a valid type.")
 
     def _get_books(self: JSONConverter) -> None:
