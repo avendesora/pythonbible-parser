@@ -31,6 +31,7 @@ class OSISBookParser:
         plain_text_readers_offset: int,
         plain_text_notes_offset: int,
     ) -> None:
+        """Initialize the OSISBookParser."""
         self.root: Any = root
         self.html_offset: int = html_offset
         self.html_readers_offset: int = html_readers_offset

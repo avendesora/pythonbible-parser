@@ -131,3 +131,7 @@ dmypy.json
 
 # Pycharm
 .idea/
+
+# Generated output folders
+/pythonbible_parser/osis/output/
+/tests/output/

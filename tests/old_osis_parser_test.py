@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
 import pytest
 import pythonbible as bible
 
-from pythonbible_parser.bible_parser import BibleParser
 from pythonbible_parser.osis.old_osis_parser import OldOSISParser
+
+if TYPE_CHECKING:
+    from pythonbible_parser.bible_parser import BibleParser
 
 DEFAULT_PARSER = OldOSISParser(bible.Version.KING_JAMES)
 
