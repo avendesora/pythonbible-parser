@@ -32,7 +32,9 @@ def _import_bible_data(file_name: str) -> dict[int, str]:
 KJV_BASELINE = _import_bible_data("t_kjv.json")
 
 
-@pytest.mark.xfail(reason="The KJV test data seems to be from a slightly different version.")
+@pytest.mark.xfail(
+    reason="The KJV test data seems to be from a slightly different version."
+)
 def test_kjv_bible_data() -> None:
     parser = OSISParser(pb.Version.KING_JAMES)
     parser.parse()
