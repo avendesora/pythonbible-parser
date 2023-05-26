@@ -29,10 +29,13 @@ def _import_bible_data(file_name: str) -> dict[int, str]:
     return bible_data
 
 
+ASV_BASELINE = _import_bible_data("t_asv.json")
 KJV_BASELINE = _import_bible_data("t_kjv.json")
 
 
-@pytest.mark.xfail(reason="The KJV test data seems to be from a slightly different version.")
+@pytest.mark.xfail(
+    reason="The KJV test data seems to be from a slightly different version.",
+)
 def test_kjv_bible_data() -> None:
     parser = OSISParser(pb.Version.KING_JAMES)
     parser.parse()
@@ -66,6 +69,47 @@ def test_kjv_bible_data() -> None:
             actual_file.write(str(differences_actual))
 
         expected_file_path = Path(output_folder_path / "kjv_expected.txt")
+
+        with expected_file_path.open(mode="w", encoding="utf-8") as expected_file:
+            expected_file.write(str(differences_expected))
+
+    assert valid
+
+
+@pytest.mark.xfail(reason="The differences need to be researched.")
+def test_asv_bible_data() -> None:
+    parser = OSISParser(pb.Version.AMERICAN_STANDARD)
+    parser.parse()
+
+    differences_actual = {}
+    differences_expected = {}
+
+    valid: bool = True
+
+    for verse_id in parser.plain_text_readers_verse_start_indices:
+        expected = ASV_BASELINE.get(verse_id, "").strip()
+        start = parser.plain_text_readers_verse_start_indices[verse_id]
+        end = parser.plain_text_readers_verse_end_indices[verse_id]
+        actual = parser.plain_text_readers[start:end].replace("`", "'").strip()
+
+        if actual != expected:
+            differences_actual[verse_id] = actual
+            differences_expected[verse_id] = expected
+
+            valid = False
+
+    if not valid:
+        output_folder_path = Path(OUTPUT_FOLDER)
+
+        if not output_folder_path.exists():
+            output_folder_path.mkdir()
+
+        actual_file_path = Path(output_folder_path / "asv_actual.txt")
+
+        with actual_file_path.open(mode="w", encoding="utf-8") as actual_file:
+            actual_file.write(str(differences_actual))
+
+        expected_file_path = Path(output_folder_path / "asv_expected.txt")
 
         with expected_file_path.open(mode="w", encoding="utf-8") as expected_file:
             expected_file.write(str(differences_expected))
