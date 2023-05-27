@@ -66,12 +66,14 @@ def test_kjv_bible_data() -> None:
         actual_file_path = Path(output_folder_path / "kjv_actual.txt")
 
         with actual_file_path.open(mode="w", encoding="utf-8") as actual_file:
-            actual_file.write(str(differences_actual))
+            for verse_id, text in differences_actual.items():
+                actual_file.write(f"{verse_id}\t{text}\n\n")
 
         expected_file_path = Path(output_folder_path / "kjv_expected.txt")
 
         with expected_file_path.open(mode="w", encoding="utf-8") as expected_file:
-            expected_file.write(str(differences_expected))
+            for verse_id, text in differences_expected.items():
+                expected_file.write(f"{verse_id}\t{text}\n\n")
 
     assert valid
 
@@ -107,11 +109,13 @@ def test_asv_bible_data() -> None:
         actual_file_path = Path(output_folder_path / "asv_actual.txt")
 
         with actual_file_path.open(mode="w", encoding="utf-8") as actual_file:
-            actual_file.write(str(differences_actual))
+            for verse_id, text in differences_actual.items():
+                actual_file.write(f"{verse_id}\t{text}\n\n")
 
         expected_file_path = Path(output_folder_path / "asv_expected.txt")
 
         with expected_file_path.open(mode="w", encoding="utf-8") as expected_file:
-            expected_file.write(str(differences_expected))
+            for verse_id, text in differences_expected.items():
+                expected_file.write(f"{verse_id}\t{text}\n\n")
 
     assert valid
