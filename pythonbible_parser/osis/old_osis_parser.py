@@ -347,7 +347,7 @@ def _handle_verse_tag(
 
     osis_id: OSISID = parse_osis_id(osis_id_str)
     verse_id: int = get_verse_id(
-        osis_id.book.value,
+        Book(osis_id.book.value),
         int(osis_id.chapter),
         int(osis_id.verse),
     )
