@@ -89,7 +89,7 @@ def sort_paragraphs(
     :return: an OrderedDict(Book, OrderedDict(int, list(string)))
     """
     ordered_paragraphs: dict[Book, dict[int, list[str]]] = OrderedDict()
-    book_keys: list[Book] = sorted(paragraphs.keys(), key=lambda x: x.value)
+    book_keys: list[Book] = sorted(paragraphs.keys(), key=lambda bk: bk.value)
 
     for book in book_keys:
         chapters: dict[int, list[str]] = paragraphs.get(book, OrderedDict())

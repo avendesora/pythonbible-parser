@@ -45,9 +45,8 @@ def test_kjv_bible_data() -> None:
 
     valid: bool = True
 
-    for verse_id in parser.plain_text_readers_verse_start_indices:
+    for verse_id, start in parser.plain_text_readers_verse_start_indices.items():
         expected = KJV_BASELINE.get(verse_id, "").strip()
-        start = parser.plain_text_readers_verse_start_indices[verse_id]
         end = parser.plain_text_readers_verse_end_indices[verse_id]
         actual = parser.plain_text_readers[start:end].replace("`", "'").strip()
 
@@ -88,9 +87,8 @@ def test_asv_bible_data() -> None:
 
     valid: bool = True
 
-    for verse_id in parser.plain_text_readers_verse_start_indices:
+    for verse_id, start in parser.plain_text_readers_verse_start_indices.items():
         expected = ASV_BASELINE.get(verse_id, "").strip()
-        start = parser.plain_text_readers_verse_start_indices[verse_id]
         end = parser.plain_text_readers_verse_end_indices[verse_id]
         actual = parser.plain_text_readers[start:end].replace("`", "'").strip()
 
