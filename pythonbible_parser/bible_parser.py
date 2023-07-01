@@ -3,23 +3,23 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections import OrderedDict
+from typing import TYPE_CHECKING
 from typing import Any
 
-from pythonbible import Book
-from pythonbible import Version
+if TYPE_CHECKING:
+    from pythonbible import Book
+    from pythonbible import Version
 
 
 class BibleParser:
-    """
-    Parse files containing scripture text.
+    """Parse files containing scripture text.
 
     BibleParser is a generic parser to provide common functionality for specific
     parsers (e.g. OSIS, USFM, USFX, etc.) for parsing scripture text.
     """
 
     def __init__(self: BibleParser, version: Version) -> None:
-        """
-        Initialize the Bible parser with the version.
+        """Initialize the Bible parser with the version.
 
         :param version:
         """
@@ -27,8 +27,7 @@ class BibleParser:
 
     @abstractmethod
     def get_book_title(self: BibleParser, book: Book) -> str:
-        """
-        Given a book, return the full title for that book from the XML file.
+        """Given a book, return the full title for that book from the XML file.
 
         :param book:
         :return: the full title string
@@ -36,8 +35,7 @@ class BibleParser:
 
     @abstractmethod
     def get_short_book_title(self: BibleParser, book: Book) -> str:
-        """
-        Given a book, return the short title for that book from the XML file.
+        """Given a book, return the short title for that book from the XML file.
 
         :param book:
         :return: the short title string
@@ -49,8 +47,7 @@ class BibleParser:
         verse_ids: list[int],
         **kwargs: Any | None,
     ) -> dict[Book, dict[int, list[str]]]:
-        """
-        Get the scripture passage for the given verse ids.
+        """Get the scripture passage for the given verse ids.
 
         Given a list of verse ids, return the structured scripture text passage
         organized by book, chapter, and paragraph.
@@ -65,8 +62,7 @@ class BibleParser:
 
     @abstractmethod
     def verse_text(self: BibleParser, verse_id: int, **kwargs: Any | None) -> str:
-        """
-        Get the scripture text for the given verse id.
+        """Get the scripture text for the given verse id.
 
         Given a verse id, return the string scripture text passage for that verse.
 
@@ -82,8 +78,7 @@ class BibleParser:
 def sort_paragraphs(
     paragraphs: dict[Book, dict[int, list[str]]],
 ) -> dict[Book, dict[int, list[str]]]:
-    """
-    Sort paragraphs of scripture text.
+    """Sort paragraphs of scripture text.
 
     Given a structured collection of paragraphs organized by book, chapter, and
     list of paragraphs, return that collection in an ordered dictionary with the
@@ -94,7 +89,7 @@ def sort_paragraphs(
     :return: an OrderedDict(Book, OrderedDict(int, list(string)))
     """
     ordered_paragraphs: dict[Book, dict[int, list[str]]] = OrderedDict()
-    book_keys: list[Book] = sorted(paragraphs.keys(), key=lambda x: x.value)
+    book_keys: list[Book] = sorted(paragraphs.keys(), key=lambda bk: bk.value)
 
     for book in book_keys:
         chapters: dict[int, list[str]] = paragraphs.get(book, OrderedDict())

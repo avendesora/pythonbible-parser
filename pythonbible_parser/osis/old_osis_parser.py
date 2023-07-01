@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from defusedxml import ElementTree
@@ -24,7 +25,7 @@ from pythonbible_parser.osis.osis_utilities import get_namespace
 from pythonbible_parser.osis.osis_utilities import parse_osis_id
 from pythonbible_parser.osis.osis_utilities import strip_namespace_from_tag
 
-XML_FOLDER: str = os.path.join(os.path.dirname(os.path.realpath(__file__)), "versions")
+XML_FOLDER: str = Path(Path(os.path.realpath(__file__)).parent / "versions")
 
 XPATH_BOOK: str = ".//xmlns:div[@osisID='{}']"
 XPATH_BOOK_TITLE: str = f"{XPATH_BOOK}/xmlns:title"
@@ -33,16 +34,14 @@ XPATH_VERSE_PARENT: str = f"{XPATH_VERSE}/.."
 
 
 class OldOSISParser(BibleParser):
-    """
-    Parse files containing scripture text in the OSIS format.
+    """Parse files containing scripture text in the OSIS format.
 
     OSISParser extends BibleParser and contains all the functionality necessary
     to parse XML files that are in the OSIS format.
     """
 
     def __init__(self: OldOSISParser, version: Version) -> None:
-        """
-        Initialize the OSIS parser.
+        """Initialize the OSIS parser.
 
         Set the version, the element tree from the appropriate version XML file,
         and the namespaces.
@@ -52,7 +51,7 @@ class OldOSISParser(BibleParser):
         super().__init__(version)
 
         self.tree: ElementTree = ElementTree.parse(
-            os.path.join(XML_FOLDER, f"{self.version.value.lower()}.xml"),
+            Path(XML_FOLDER / f"{self.version.value.lower()}.xml"),
         )
         self.namespaces: dict[str, str] = {
             "xmlns": get_namespace(self.tree.getroot().tag),
@@ -60,8 +59,7 @@ class OldOSISParser(BibleParser):
 
     @lru_cache()
     def get_book_title(self: OldOSISParser, book: Book) -> str:
-        """
-        Given a book, return the full title for that book from the XML file.
+        """Given a book, return the full title for that book from the XML file.
 
         :param book:
         :return: the full title string
@@ -71,8 +69,7 @@ class OldOSISParser(BibleParser):
 
     @lru_cache()
     def get_short_book_title(self: OldOSISParser, book: Book) -> str:
-        """
-        Given a book, return the short title for that book from the XML file.
+        """Given a book, return the short title for that book from the XML file.
 
         :param book:
         :return: the short title string
@@ -85,8 +82,7 @@ class OldOSISParser(BibleParser):
         verse_ids: list[int],
         **kwargs: Any | None,
     ) -> dict[Book, dict[int, list[str]]]:
-        """
-        Get the scripture passage for the given verse ids.
+        """Get the scripture passage for the given verse ids.
 
         Given a list of verse ids, return the structured scripture text passage
         organized by book, chapter, and paragraph.
@@ -119,8 +115,7 @@ class OldOSISParser(BibleParser):
         verse_id: int,
         **kwargs: Any | None,
     ) -> str:
-        """
-        Get the scripture text for the given verse id.
+        """Get the scripture text for the given verse id.
 
         Given a verse id, return the string scripture text passage for that verse.
 
@@ -132,7 +127,8 @@ class OldOSISParser(BibleParser):
         :return:
         """
         if verse_id is None:
-            raise InvalidVerseError("Verse id cannot be None.")
+            msg = "Verse id cannot be None."
+            raise InvalidVerseError(msg)
 
         # keyword arguments
         include_verse_number: bool = kwargs.get("include_verse_number", True)

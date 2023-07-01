@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
+from typing import TYPE_CHECKING
 from typing import Any
 
-from pythonbible import Book
-
 from pythonbible_parser.osis.constants import get_book_by_id
+
+if TYPE_CHECKING:
+    from pythonbible import Book
 
 
 @lru_cache()

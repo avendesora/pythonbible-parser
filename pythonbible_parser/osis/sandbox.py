@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from logging import info
+from pathlib import Path
 
 number_of_characters: int = 0
 tags: set[str] = set()
 current_tag: str = ""
 in_tag: bool = False
 
-with open("versions/asv.xml", "r", encoding="utf-8") as reader:
+file_path = Path("versions" / "asv.xml")
+
+with file_path.open(encoding="utf-8") as reader:
     while True:
         character: str = reader.read(1)
 
