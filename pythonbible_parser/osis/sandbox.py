@@ -36,7 +36,7 @@ with file_path.open(encoding="utf-8") as reader:
 
         number_of_characters += 1
 
-    info(f"Total number of characters = {number_of_characters}.")
+    info("Total number of characters = %s", str(number_of_characters))
 
     sorted_tags = sorted(tags)
     for tag in sorted_tags:
