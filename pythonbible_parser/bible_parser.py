@@ -1,4 +1,5 @@
 """Contains the BibleParser generic parser class."""
+
 from __future__ import annotations
 
 from abc import abstractmethod

@@ -1,6 +1,5 @@
 """Contains the parser for OSIS format files."""
 
-
 from __future__ import annotations
 
 import os
