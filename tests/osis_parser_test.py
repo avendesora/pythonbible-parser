@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
 import pythonbible as bible
 
@@ -285,3 +286,27 @@ def test_write() -> None:
     # actually test this once the functionality is more complete
     get_parser(bible.Version.KING_JAMES).write()
     get_parser(bible.Version.AMERICAN_STANDARD).write()
+
+
+def test_alternate_asv_osis_file() -> None:
+    # Given an alternate ASV OSIS file
+    osis_file = Path(__file__).parent / "data" / "alternate_asv.xml"
+
+    # When parsing the OSIS file
+    parser = OSISParser(bible.Version.AMERICAN_STANDARD, osis_file=osis_file)
+    parser.parse()
+
+    # Then the parser has the correct version and the text is as expected
+    assert parser.version == bible.Version.AMERICAN_STANDARD
+
+    alternate_asv_bible = bible.Bible(
+        parser.version,
+        parser.plain_text,
+        parser.plain_text_verse_start_indices,
+        parser.plain_text_verse_end_indices,
+    )
+    first_verse = alternate_asv_bible.get_scripture(1001001)
+    last_verse = alternate_asv_bible.get_scripture(66022021)
+
+    assert first_verse == "1. In the beginning God created the heavens and the earth."
+    assert last_verse == "21. The grace of the Lord Jesus be with the saints. Amen."

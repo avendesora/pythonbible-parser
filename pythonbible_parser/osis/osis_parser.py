@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from datetime import datetime
 from datetime import timezone
 from pathlib import Path
@@ -15,10 +14,9 @@ from pythonbible_parser.osis.constants import BOOK_IDS
 from pythonbible_parser.osis.osis_book_parser import OSISBookParser
 from pythonbible_parser.osis.osis_utilities import get_namespace
 
-CURRENT_FOLDER: str = os.path.realpath(__file__)
-CURRENT_FOLDER_NAME: str = Path(CURRENT_FOLDER).parent
-INPUT_FOLDER: str = Path(CURRENT_FOLDER_NAME / "versions")
-OUTPUT_FOLDER: str = Path(CURRENT_FOLDER_NAME / "output")
+CURRENT_FOLDER: Path = Path(__file__).parent
+INPUT_FOLDER: Path = CURRENT_FOLDER / "versions"
+OUTPUT_FOLDER: Path = CURRENT_FOLDER / "output"
 
 XPATH_BOOK: str = ".//xmlns:div[@osisID='{}']"
 
@@ -30,7 +28,11 @@ class OSISParser:
     to parse XML files that are in the OSIS format.
     """
 
-    def __init__(self: OSISParser, version: bible.Version) -> None:
+    def __init__(
+        self: OSISParser,
+        version: bible.Version,
+        osis_file: Path | None = None,
+    ) -> None:
         """Initialize the OSIS parser.
 
         Set the version, the element tree from the appropriate version XML file,
@@ -40,9 +42,10 @@ class OSISParser:
         """
         self.version: bible.Version = version
 
-        self.tree: ElementTree = ElementTree.parse(
-            Path(INPUT_FOLDER / f"{version.value.lower()}.xml"),
-        )
+        if not osis_file:
+            osis_file = INPUT_FOLDER / f"{version.value.lower()}.xml"
+
+        self.tree: ElementTree = ElementTree.parse(osis_file.resolve())
         self.namespaces: dict[str, str] = {
             "xmlns": get_namespace(self.tree.getroot().tag),
         }
@@ -148,12 +151,12 @@ class OSISParser:
             self.short_titles[book] = book_parser.short_title
             self.long_titles[book] = book_parser.title
 
-    def write(self: OSISParser) -> None:
+    def write(self: OSISParser, output_folder: Path = OUTPUT_FOLDER) -> None:
         """Write the content out to file(s)."""
         version_str: str = self.version.value.lower()
-        version_folder: str = Path(OUTPUT_FOLDER / version_str)
+        version_folder: Path = output_folder / version_str
 
-        for folder in (OUTPUT_FOLDER, version_folder):
+        for folder in (output_folder, version_folder):
             folder_path = Path(folder)
 
             if not folder_path.exists():
@@ -219,7 +222,7 @@ class OSISParser:
 
 
 def _write_file(
-    folder: str,
+    folder: Path,
     filename: str,
     version: bible.Version,
     bible_text: str,
@@ -227,7 +230,7 @@ def _write_file(
     verse_end_indices: dict[int, int],
     is_html: bool = False,
 ) -> None:
-    file_path = Path(folder / filename)
+    file_path = folder / filename
 
     with file_path.open(mode="w", encoding="utf-8") as writer:
         writer.write(_file_header())
@@ -243,11 +246,11 @@ def _write_file(
 
 
 def _write_titles_file(
-    folder: str,
+    folder: Path,
     short_titles: dict[bible.Book, str],
     long_titles: dict[bible.Book, str],
 ) -> None:
-    file_path = Path(folder / "titles.py")
+    file_path = folder / "titles.py"
 
     with file_path.open(mode="w", encoding="utf-8") as writer:
         writer.write(_file_header())

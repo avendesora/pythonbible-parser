@@ -81,7 +81,7 @@ class OSISBookParser:
         tag: str = strip_namespace_from_tag(element.tag)
 
         self._handle_paragraph(element, tag)
-        self._handle_chapter(tag)
+        self._handle_chapter(element, tag)
         self._handle_title(element, tag)
         self._handle_verse(element, tag, in_notes)
         self._handle_q(element, tag, in_notes)
@@ -113,12 +113,15 @@ class OSISBookParser:
         self.html_readers += HTML_P_CLOSE
         self.html_notes += HTML_P_CLOSE
 
-    def _handle_chapter(self: OSISBookParser, tag: str) -> None:
+    def _handle_chapter(self: OSISBookParser, element: Any, tag: str) -> None:
         if tag != "chapter":
             return
 
         self._set_verse_end_indices()
         self.current_verse = 0
+
+        # Some OSIS files have verses within the chapter, some have them outside.
+        self._process_children(element)
 
     def _handle_title(self: OSISBookParser, element: Any, tag: str) -> None:
         if tag != "title":
@@ -139,7 +142,6 @@ class OSISBookParser:
         if tag != "verse":
             return
 
-        self._append_text(get_element_text(element), in_notes)
         osis_id_str = element.get("osisID")
 
         if osis_id_str is None:
@@ -180,6 +182,7 @@ class OSISBookParser:
             self.plain_text_notes += " "
 
         self.plain_text_notes += f"{osis_id.verse}."
+        self._append_text(get_element_text(element), in_notes)
         self._append_text(get_element_tail(element), in_notes)
 
     def _handle_q(self: OSISBookParser, element: Any, tag: str, in_notes: bool) -> None:
