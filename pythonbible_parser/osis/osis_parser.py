@@ -28,6 +28,32 @@ class OSISParser:
     to parse XML files that are in the OSIS format.
     """
 
+    version: bible.Version
+
+    html: str
+    html_readers: str
+    html_notes: str
+    plain_text: str
+    plain_text_readers: str
+    plain_text_notes: str
+
+    html_verse_start_indices: dict[int, int]
+    html_readers_verse_start_indices: dict[int, int]
+    html_notes_verse_start_indices: dict[int, int]
+    plain_text_verse_start_indices: dict[int, int]
+    plain_text_readers_verse_start_indices: dict[int, int]
+    plain_text_notes_verse_start_indices: dict[int, int]
+
+    html_verse_end_indices: dict[int, int]
+    html_readers_verse_end_indices: dict[int, int]
+    html_notes_verse_end_indices: dict[int, int]
+    plain_text_verse_end_indices: dict[int, int]
+    plain_text_readers_verse_end_indices: dict[int, int]
+    plain_text_notes_verse_end_indices: dict[int, int]
+
+    short_titles: dict[bible.Book, str]
+    long_titles: dict[bible.Book, str]
+
     def __init__(
         self: OSISParser,
         version: bible.Version,
@@ -40,7 +66,7 @@ class OSISParser:
 
         :param version:
         """
-        self.version: bible.Version = version
+        self.version = version
 
         if not osis_file:
             osis_file = INPUT_FOLDER / f"{version.value.lower()}.xml"
@@ -50,29 +76,29 @@ class OSISParser:
             "xmlns": get_namespace(self.tree.getroot().tag),
         }
 
-        self.html: str = ""
-        self.html_readers: str = ""
-        self.html_notes: str = ""
-        self.plain_text: str = ""
-        self.plain_text_readers: str = ""
-        self.plain_text_notes: str = ""
+        self.html = ""
+        self.html_readers = ""
+        self.html_notes = ""
+        self.plain_text = ""
+        self.plain_text_readers = ""
+        self.plain_text_notes = ""
 
-        self.html_verse_start_indices: dict[int, int] = {}
-        self.html_readers_verse_start_indices: dict[int, int] = {}
-        self.html_notes_verse_start_indices: dict[int, int] = {}
-        self.plain_text_verse_start_indices: dict[int, int] = {}
-        self.plain_text_readers_verse_start_indices: dict[int, int] = {}
-        self.plain_text_notes_verse_start_indices: dict[int, int] = {}
+        self.html_verse_start_indices = {}
+        self.html_readers_verse_start_indices = {}
+        self.html_notes_verse_start_indices = {}
+        self.plain_text_verse_start_indices = {}
+        self.plain_text_readers_verse_start_indices = {}
+        self.plain_text_notes_verse_start_indices = {}
 
-        self.html_verse_end_indices: dict[int, int] = {}
-        self.html_readers_verse_end_indices: dict[int, int] = {}
-        self.html_notes_verse_end_indices: dict[int, int] = {}
-        self.plain_text_verse_end_indices: dict[int, int] = {}
-        self.plain_text_readers_verse_end_indices: dict[int, int] = {}
-        self.plain_text_notes_verse_end_indices: dict[int, int] = {}
+        self.html_verse_end_indices = {}
+        self.html_readers_verse_end_indices = {}
+        self.html_notes_verse_end_indices = {}
+        self.plain_text_verse_end_indices = {}
+        self.plain_text_readers_verse_end_indices = {}
+        self.plain_text_notes_verse_end_indices = {}
 
-        self.short_titles: dict[bible.Book, str] = {}
-        self.long_titles: dict[bible.Book, str] = {}
+        self.short_titles = {}
+        self.long_titles = {}
 
     def parse(self: OSISParser) -> None:
         """Parse the XML input file."""

@@ -115,7 +115,11 @@ ignore = [
 "pythonbible_parser/osis/osis_book_parser.py" = ["C901", "PLR0913"]
 "pythonbible_parser/osis/osis_parser.py" = ["PLR0913"]
 "tests/*.py" = ["S101"]
+"tests/bible_data_test.py" = ["ERA001"]
 "tests/conftest.py" = ["E501", "RUF"]
+"tests/public_domain_versions_test.py" = ["ERA001"]
+# TODO - remove this once code is fully implemented
+"pythonbible_parser/usfm/usfm_parser.py" = ["ANN001", "ANN101", "D105", "D107", "T201"]
 
 [tool.ruff.lint.isort]
 force-single-line = true
