@@ -1,6 +1,2 @@
 defusedxml==0.7.1
-<<<<<<< issue-66-parsing-additional-translations
 pythonbible==0.13.1
-=======
-pythonbible==0.13.0
->>>>>>> main
