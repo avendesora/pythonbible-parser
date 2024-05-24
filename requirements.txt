@@ -1,3 +1,2 @@
 defusedxml==0.7.1
-pyparsing==3.1.2
-pythonbible==0.12.0
+pythonbible==0.13.1
