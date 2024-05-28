@@ -25,7 +25,7 @@ classifiers = [
 ]
 requires = [
     "defusedxml >=0.7.1",
-    "pythonbible ==0.10.0",
+    "pythonbible ==0.13.1,
 ]
 description-file = "README.md"
 requires-python = ">=3.8"
