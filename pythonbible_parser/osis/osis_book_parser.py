@@ -221,7 +221,7 @@ class OSISBookParser:
             self.plain_text_notes += " "
 
         self.plain_text_notes += f"{osis_id.verse}."
-        self._append_text(get_element_text(element), in_notes)
+        self._append_text(get_element_text(element).replace("\\", "\\\\"), in_notes)
         self._append_text(get_element_tail(element), in_notes)
 
         self._process_children(element, in_notes)

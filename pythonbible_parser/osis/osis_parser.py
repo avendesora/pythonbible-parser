@@ -174,8 +174,8 @@ class OSISParser:
                 book_parser.plain_text_notes_verse_end_indices,
             )
 
-            self.short_titles[book] = book_parser.short_title
-            self.long_titles[book] = book_parser.title
+            self.short_titles[book] = book_parser.short_title or book.title
+            self.long_titles[book] = book_parser.title.strip() or book.title
 
     def write(self: OSISParser, output_folder: Path = OUTPUT_FOLDER) -> None:
         """Write the content out to file(s)."""
@@ -241,6 +241,7 @@ class OSISParser:
         )
 
         _write_titles_file(version_folder, self.short_titles, self.long_titles)
+        _write_init_file(version_folder)
 
     def _get_book_element(self: OSISParser, book: bible.Book) -> Any:
         xpath: str = XPATH_BOOK.format(BOOK_IDS.get(book))
@@ -289,10 +290,17 @@ def _titles_dict_to_string(titles: dict[bible.Book, str]) -> str:
     return (
         "{\n"
         + ",\n".join(
-            [f"    Book.{book.name}: '{title}'" for book, title in titles.items()],
+            [f'    Book.{book.name}: "{title}"' for book, title in titles.items()],
         )
         + ",\n}"
     )
+
+
+def _write_init_file(folder: Path) -> None:
+    file_path = folder / "__init__.py"
+
+    with file_path.open(mode="w", encoding="utf-8") as writer:
+        writer.write(_file_header())
 
 
 def _file_header() -> str:

@@ -462,6 +462,9 @@ def test_alternate_osis_files(
         actual_verse = parsed_bible.get_scripture(verse_id)
         assert actual_verse == expected_verse
 
+    # Uncomment this to generate the output files.
+    parser.write()
+
 
 @pytest.mark.xfail(
     reason="KJV has minor differences, and ASV alternate has some errors.",
