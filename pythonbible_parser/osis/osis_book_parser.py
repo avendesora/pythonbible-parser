@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from pythonbible import get_book_chapter_verse
 from pythonbible import get_verse_id
 
 from pythonbible_parser.osis.osis_utilities import get_element_tail
@@ -57,6 +58,8 @@ class OSISBookParser:
     plain_text_readers_verse_end_indices: dict[int, int]
     plain_text_notes_verse_end_indices: dict[int, int]
 
+    max_verses: dict[int, int]
+
     current_verse: int
 
     unknown_tags: set[str]
@@ -103,6 +106,8 @@ class OSISBookParser:
         self.plain_text_verse_end_indices = {}
         self.plain_text_readers_verse_end_indices = {}
         self.plain_text_notes_verse_end_indices = {}
+
+        self.max_verses = {}
 
         self.current_verse = 0
 
@@ -193,6 +198,7 @@ class OSISBookParser:
         self.current_verse = get_verse_id(osis_id.book, osis_id.chapter, osis_id.verse)
 
         self._set_verse_start_indices()
+        self._update_max_verses()
 
         if (
             self.html
@@ -392,3 +398,7 @@ class OSISBookParser:
         self.plain_text_notes_verse_start_indices[self.current_verse] = (
             len(self.plain_text_notes) + self.plain_text_notes_offset
         )
+
+    def _update_max_verses(self: OSISBookParser) -> None:
+        _, chapter, verse = get_book_chapter_verse(self.current_verse)
+        self.max_verses[chapter] = max(verse, self.max_verses.get(chapter, 0))

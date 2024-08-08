@@ -456,14 +456,12 @@ def test_alternate_osis_files(
         parser.plain_text,
         parser.plain_text_verse_start_indices,
         parser.plain_text_verse_end_indices,
+        parser.max_verses,
     )
 
     for verse_id, expected_verse in verses:
         actual_verse = parsed_bible.get_scripture(verse_id)
         assert actual_verse == expected_verse
-
-    # Uncomment this to generate the output files.
-    parser.write()
 
 
 @pytest.mark.xfail(
