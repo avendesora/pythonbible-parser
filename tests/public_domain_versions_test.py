@@ -428,6 +428,21 @@ test_data = [
             ),
         ],
     ),
+    (
+        bible.Version.REINA_VALERA_1989,
+        "es",
+        "rva.xml",
+        [
+            (
+                1001001,
+                "1. En el principio creó Dios los cielos y la tierra.",
+            ),
+            (
+                66022021,
+                "21. La gracia de nuestro Señor Jesús sea con todos.",
+            ),
+        ],
+    ),
 ]
 
 
@@ -462,6 +477,8 @@ def test_alternate_osis_files(
     for verse_id, expected_verse in verses:
         actual_verse = parsed_bible.get_scripture(verse_id)
         assert actual_verse == expected_verse
+
+    # parser.write()
 
 
 @pytest.mark.xfail(

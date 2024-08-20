@@ -202,8 +202,6 @@ class OSISParser:
             self.html_verse_start_indices,
             self.html_verse_end_indices,
             self.max_verses,
-            self.short_titles,
-            self.long_titles,
             True,
         )
         _write_bible_file(
@@ -214,8 +212,6 @@ class OSISParser:
             self.html_readers_verse_start_indices,
             self.html_readers_verse_end_indices,
             self.max_verses,
-            self.short_titles,
-            self.long_titles,
             True,
         )
         _write_bible_file(
@@ -226,8 +222,6 @@ class OSISParser:
             self.html_notes_verse_start_indices,
             self.html_notes_verse_end_indices,
             self.max_verses,
-            self.short_titles,
-            self.long_titles,
             True,
         )
         _write_bible_file(
@@ -238,8 +232,6 @@ class OSISParser:
             self.plain_text_verse_start_indices,
             self.plain_text_verse_end_indices,
             self.max_verses,
-            self.short_titles,
-            self.long_titles,
         )
         _write_bible_file(
             version_folder,
@@ -249,8 +241,6 @@ class OSISParser:
             self.plain_text_readers_verse_start_indices,
             self.plain_text_readers_verse_end_indices,
             self.max_verses,
-            self.short_titles,
-            self.long_titles,
         )
         _write_bible_file(
             version_folder,
@@ -260,11 +250,9 @@ class OSISParser:
             self.plain_text_notes_verse_start_indices,
             self.plain_text_notes_verse_end_indices,
             self.max_verses,
-            self.short_titles,
-            self.long_titles,
         )
 
-        _write_init_file(version_folder)
+        _write_init_file(version_folder, self.short_titles, self.long_titles)
 
     def _get_book_element(self: OSISParser, book: bible.Book) -> Any:
         xpath: str = XPATH_BOOK.format(BOOK_IDS.get(book))
@@ -293,8 +281,6 @@ def _write_bible_file(
     verse_start_indices: dict[int, int],
     verse_end_indices: dict[int, int],
     max_verses: dict[bible.Book, dict[int, int]],
-    short_titles: dict[bible.Book, str],
-    long_titles: dict[bible.Book, str],
     is_html: bool = False,
 ) -> None:
     file_path = folder / filename
@@ -310,8 +296,6 @@ def _write_bible_file(
         writer.write(f"    {verse_start_indices},\n")
         writer.write(f"    {verse_end_indices},\n")
         writer.write(f"    {_get_max_verses_string(max_verses)},\n")
-        writer.write(f"    {_titles_dict_to_string(short_titles)},\n")
-        writer.write(f"    {_titles_dict_to_string(long_titles)},\n")
         writer.write(f"    {is_html},\n")
         writer.write(")\n")
 
@@ -349,8 +333,16 @@ def _titles_dict_to_string(titles: dict[bible.Book, str]) -> str:
     )
 
 
-def _write_init_file(folder: Path) -> None:
+def _write_init_file(
+    folder: Path,
+    short_titles: dict[bible.Book, str],
+    long_titles: dict[bible.Book, str],
+) -> None:
     file_path = folder / "__init__.py"
 
     with file_path.open(mode="w", encoding="utf-8") as writer:
         writer.write(_file_header())
+        writer.write("from pythonbible.books import Book\n\n\n")
+        writer.write(f"SHORT_TITLES = {_titles_dict_to_string(short_titles)}\n\n")
+        writer.write(f"LONG_TITLES = {_titles_dict_to_string(long_titles)}\n")
+
