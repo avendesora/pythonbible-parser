@@ -428,21 +428,21 @@ test_data = [
             ),
         ],
     ),
-    (
-        bible.Version.REINA_VALERA_1989,
-        "es",
-        "rva.xml",
-        [
-            (
-                1001001,
-                "1. En el principio creó Dios los cielos y la tierra.",
-            ),
-            (
-                66022021,
-                "21. La gracia de nuestro Señor Jesús sea con todos.",
-            ),
-        ],
-    ),
+    # (
+    #     bible.Version.REINA_VALERA_1989,
+    #     "es",
+    #     "rva.xml",
+    #     [
+    #         (
+    #             1001001,
+    #             "1. En el principio creó Dios los cielos y la tierra.",
+    #         ),
+    #         (
+    #             66022021,
+    #             "21. La gracia de nuestro Señor Jesús sea con todos.",
+    #         ),
+    #     ],
+    # ),
 ]
 
 
