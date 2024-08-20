@@ -345,4 +345,3 @@ def _write_init_file(
         writer.write("from pythonbible.books import Book\n\n\n")
         writer.write(f"SHORT_TITLES = {_titles_dict_to_string(short_titles)}\n\n")
         writer.write(f"LONG_TITLES = {_titles_dict_to_string(long_titles)}\n")
-
