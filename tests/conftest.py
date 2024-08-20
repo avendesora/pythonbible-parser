@@ -6,17 +6,17 @@ import pytest
 import pythonbible as bible
 
 
-@pytest.fixture()
+@pytest.fixture
 def verse_id() -> int:
     return 1001001
 
 
-@pytest.fixture()
+@pytest.fixture
 def invalid_verse_id() -> int:
     return 1100100
 
 
-@pytest.fixture()
+@pytest.fixture
 def verse_ids_complex() -> list[int]:
     return [
         19130004,
@@ -65,12 +65,12 @@ def verse_ids_complex() -> list[int]:
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def verse_text() -> str:
     return "1. In the beginning God created the heaven and the earth."
 
 
-@pytest.fixture()
+@pytest.fixture
 def kjv_passage() -> dict[bible.Book, dict[int, list[str]]]:
     return OrderedDict(
         [
@@ -153,7 +153,7 @@ def kjv_passage() -> dict[bible.Book, dict[int, list[str]]]:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def kjv_passage_no_verse_numbers() -> dict[bible.Book, dict[int, list[str]]]:
     return OrderedDict(
         [
@@ -236,7 +236,7 @@ def kjv_passage_no_verse_numbers() -> dict[bible.Book, dict[int, list[str]]]:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def asv_passage() -> dict[bible.Book, dict[int, list[str]]]:
     return OrderedDict(
         [
